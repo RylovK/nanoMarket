@@ -26,7 +26,7 @@ public interface BrandService {
      * @return the {@link BrandDTO} with the given ID
      * @throws BrandNotFoundException if the brand with the given ID is not found
      */
-    BrandDTO getBrandById(int id) throws BrandNotFoundException;
+    BrandDTO getBrandById(long id) throws BrandNotFoundException;
 
     /**
      * Creates a new brand.
@@ -39,11 +39,12 @@ public interface BrandService {
     /**
      * Updates an existing brand.
      *
+     * @param id the unique ID of the brand to be updated
      * @param brandDTO the {@link BrandDTO} containing updated brand details
      * @return the updated {@link BrandDTO}
      * @throws BrandNotFoundException if the brand to be updated does not exist
      */
-    BrandDTO updateBrand(BrandDTO brandDTO) throws BrandNotFoundException;
+    BrandDTO updateBrand(long id, BrandDTO brandDTO) throws BrandNotFoundException;
 
     /**
      * Deletes a brand by its unique identifier.
@@ -51,5 +52,5 @@ public interface BrandService {
      * @param id the unique ID of the brand to be deleted
      * @return true if the brand was successfully deleted, false if no brand with the given ID was found
      */
-    boolean deleteBrand(int id);
+    boolean deleteBrand(long id);
 }
