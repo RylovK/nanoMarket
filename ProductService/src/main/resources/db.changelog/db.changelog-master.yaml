@@ -20,6 +20,9 @@ databaseChangeLog:
                     nullable: false
                     unique: true
               - column:
+                 name: image_url
+                 type: varchar(255)
+              - column:
                   name: created_at
                   type: timestamp
                   defaultValueComputed: current_timestamp

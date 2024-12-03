@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController("/api/v1/product/brand")
 @RequiredArgsConstructor
@@ -45,6 +46,12 @@ public class BrandController {
         }
         BrandDTO created = brandService.createBrand(brand);
         return new ResponseEntity<>(created, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/{id}")
+    public ResponseEntity<BrandDTO> uploadBrandImage(@PathVariable long id,
+                                                     @RequestParam("file") MultipartFile file) {
+        return null; //TODO
     }
 
     @PutMapping("/{id}")
