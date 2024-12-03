@@ -9,5 +9,5 @@ services:
     ports:
       - "8071:8071"
     environment:
-      - GIT_SSH_PRIVATE_KEY
+      - GIT_SSH_PRIVATE_KEY=${GIT_SSH_PRIVATE_KEY}
       - SPRING_PROFILES_ACTIVE=native
