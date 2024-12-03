@@ -1,0 +1,13 @@
+#version: '3.8'
+
+services:
+  config-server:
+    image: nanomarket/config-server:latest
+    build:
+      context: ./configserver
+    container_name: config-server
+    ports:
+      - "8071:8071"
+    environment:
+      - GIT_SSH_PRIVATE_KEY
+      - SPRING_PROFILES_ACTIVE=native
