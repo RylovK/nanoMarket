@@ -4,7 +4,7 @@ services:
   config-server:
     image: nanomarket/config-server:latest
     build:
-      context: ./configserver
+      context: ./ConfigServer
     container_name: config-server
     ports:
       - "8071:8071"
