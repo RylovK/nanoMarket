@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: config-server
+  server:
+    port: 8071
+
+management:
+  endpoint:
+    env:
+      post:
+        enabled: true

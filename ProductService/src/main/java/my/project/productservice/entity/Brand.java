@@ -20,7 +20,7 @@ public class Brand {
     @Column(nullable = false, unique = true)
     private String brandName;
 
-    private String imageUrl;
+    private String logoUrl;
 
     @OneToMany(mappedBy = "brand")
     private Set<Product> products = new HashSet<>();

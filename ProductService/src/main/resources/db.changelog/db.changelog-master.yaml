@@ -20,7 +20,7 @@ databaseChangeLog:
                     nullable: false
                     unique: true
               - column:
-                 name: image_url
+                 name: logo_url
                  type: varchar(255)
               - column:
                   name: created_at
