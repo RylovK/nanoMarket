@@ -1,8 +1,23 @@
 spring:
   application:
     name: config-server
-  server:
-    port: 8071
+  cloud:
+    config:
+      server:
+        native:
+          search-locations: file:C:\Users\krylov\Desktop\Documents\Java\Projects\nanoMarket\ConfigServer\src\main\resources\config\product-service
+#        git:
+#          uri: git@github.com:RylovK/nanomarket-config-repo.git
+#            #           private-key: ${GIT_SSH_PRIVATE_KEY}
+#          clone-on-start: true
+#          search-paths: config
+        bootstrap: true
+  profiles:
+    active: native
+
+
+server:
+  port: 8071
 
 management:
   endpoint:

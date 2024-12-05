@@ -1,0 +1,10 @@
+spring:
+  config:
+    import: configserver:http://localhost:8071
+  application:
+    name: product-service
+  profiles:
+    active: dev
+  liquibase:
+    enabled: true
+    contexts: dev
