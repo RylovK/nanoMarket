@@ -17,7 +17,7 @@ public interface BrandService {
      * @param brandName optional name of the brand to filter by
      * @return a page of {@link BrandDTO} objects
      */
-    Page<BrandDTO> getAllBrands(Pageable pageable, String brandName);
+    Page<BrandDTO> getAllBrands(String brandName, Pageable pageable);
 
     /**
      * Retrieves a brand by its unique identifier.

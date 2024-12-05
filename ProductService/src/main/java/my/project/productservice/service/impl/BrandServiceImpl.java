@@ -9,6 +9,8 @@ import my.project.productservice.mapper.BrandMapper;
 import my.project.productservice.repository.BrandRepository;
 import my.project.productservice.service.BrandService;
 import org.springframework.data.domain.Page;
+
+
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,8 +26,8 @@ public class BrandServiceImpl implements BrandService {
     private final BrandMapper brandMapper;
 
     @Override
-    public Page<BrandDTO> getAllBrands(Pageable pageable, String brandName) {
-        return brandRepository.findAll(pageable).map(brandMapper::toDto);
+    public Page<BrandDTO> getAllBrands(String brandName, Pageable pageable) {
+        return brandRepository.findByBrandName(brandName, pageable).map(brandMapper::toDto);
     }
 
     @Override

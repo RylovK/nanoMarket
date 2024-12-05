@@ -3,12 +3,13 @@ package my.project.productservice.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Getter @Setter
@@ -25,6 +26,8 @@ public class CategoryDTO {
     private String description;
 
     private long parentId;
+
+    private List<CategoryDTO> subcategories = new ArrayList<>();
 
     private Set<ProductDTO> products = new HashSet<>();
 }

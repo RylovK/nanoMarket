@@ -27,7 +27,7 @@ public class BrandController {
                                                        @RequestParam(required = false, value = "0") int page,
                                                        @RequestParam(required = false) String brandName) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<BrandDTO> allBrands = brandService.getAllBrands(pageable, brandName);
+        Page<BrandDTO> allBrands = brandService.getAllBrands(brandName, pageable);
         return ResponseEntity.ok(allBrands);
     }
 

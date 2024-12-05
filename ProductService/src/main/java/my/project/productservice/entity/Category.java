@@ -30,6 +30,9 @@ public class Category {
     @JoinColumn(name = "parent_id")
     private Category parent;
 
+    @OneToMany(mappedBy = "parent")
+    private Set<Category> subcategories = new HashSet<>();
+
     @OneToMany(mappedBy = "category")
     private Set<Product> products = new HashSet<>();
 
