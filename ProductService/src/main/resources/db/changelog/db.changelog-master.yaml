@@ -1,0 +1,177 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: Krylov
+      changes:
+        - createTable:
+            tableName: brand
+            columns:
+              - column:
+                  name: id
+                  type: bigserial
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: brand_name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                 name: logo_url
+                 type: varchar(255)
+              - column:
+                  name: created_at
+                  type: timestamp
+                  defaultValueComputed: current_timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: timestamp
+        - createTable:
+            tableName: category
+            columns:
+              - column:
+                  name: id
+                  type: bigserial
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: description
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: parent_id
+                  type: bigint
+                  constraints:
+                    nullable: true
+              - column:
+                  name: created_at
+                  type: timestamp
+                  defaultValueComputed: current_timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: timestamp
+        - addForeignKeyConstraint:
+            baseTableName: category
+            baseColumnNames: parent_id
+            referencedTableName: category
+            referencedColumnNames: id
+            constraintName: fk_category_parent
+            deferrable: false
+            initiallyDeferred: false
+#            SELECT * FROM category c
+#            LEFT JOIN category parent ON c.parent_id = parent.id
+#            WHERE c.parent_id IS NULL;
+  - changeSet:
+      id: 2
+      author: KRylov (generated)
+      changes:
+        - createTable:
+            tableName: product
+            columns:
+              - column:
+                  name: id
+                  type: bigserial
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: price
+                  type: decimal(10, 2)
+                  defaultValue: "0.00"
+              - column:
+                  name: quantity
+                  type: int
+                  defaultValue: "0"
+              - column:
+                  name: category_id
+                  type: bigint
+              - column:
+                  name: brand_id
+                  type: bigint
+              - column:
+                  name: created_at
+                  type: timestamp
+                  defaultValueComputed: current_timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: timestamp
+        - addForeignKeyConstraint:
+            baseTableName: product
+            baseColumnNames: category_id
+            constraintName: fk_product_category
+            referencedTableName: category
+            referencedColumnNames: id
+            onDelete: RESTRICT
+        - addForeignKeyConstraint:
+            baseTableName: product
+            baseColumnNames: brand_id
+            constraintName: fk_product_brand
+            referencedTableName: brand
+            referencedColumnNames: id
+            onDelete: RESTRICT
+
+  - changeSet:
+      id: 3
+      author: KRylov (generated)
+      changes:
+        - createTable:
+            tableName: product_image
+            columns:
+              - column:
+                  name: id
+                  type: bigserial
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: product_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: image_url
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: timestamp
+                  defaultValueComputed: current_timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: timestamp
+        - addForeignKeyConstraint:
+            baseTableName: product_image
+            baseColumnNames: product_id
+            constraintName: fk_product_image_product
+            referencedTableName: product
+            referencedColumnNames: id
+            onDelete: CASCADE
