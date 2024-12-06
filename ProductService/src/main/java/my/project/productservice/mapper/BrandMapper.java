@@ -11,5 +11,7 @@ public interface BrandMapper {
     BrandDTO toDto(Brand brand);
     Brand toEntity(BrandDTO brandDTO);
 
+
+
     Brand updateBrand(BrandDTO brandDTO, @MappingTarget Brand brand);
 }
