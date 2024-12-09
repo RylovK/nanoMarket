@@ -15,7 +15,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-@RestController("/api/v1/brand")
+@RestController
+@RequestMapping("/api/v1/brand")
 @RequiredArgsConstructor
 public class BrandController {
 
@@ -23,8 +24,8 @@ public class BrandController {
     private final BrandValidator brandValidator;
 
     @GetMapping
-    public ResponseEntity<Page<BrandDTO>> getAllBrands(@RequestParam(required = false, value = "25") int size,
-                                                       @RequestParam(required = false, value = "0") int page,
+    public ResponseEntity<Page<BrandDTO>> getAllBrands(@RequestParam(defaultValue = "0") int page,
+                                                       @RequestParam(defaultValue = "25") int size,
                                                        @RequestParam(required = false) String brandName) {
         Pageable pageable = PageRequest.of(page, size);
         Page<BrandDTO> allBrands = brandService.getAllBrands(brandName, pageable);

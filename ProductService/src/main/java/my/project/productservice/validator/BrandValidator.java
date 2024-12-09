@@ -24,9 +24,9 @@ public class BrandValidator implements Validator {
     @Override
     public void validate(Object target, Errors errors) {
         BrandDTO brandDTO = (BrandDTO) target;
-        Optional<Brand> byId = brandRepository.findById(brandDTO.getId());
+        Optional<Brand> byId = brandRepository.findByBrandName(brandDTO.getBrandName());
         if (byId.isPresent()) {
-            errors.rejectValue("id", "brand.exist", "Brand.exist");
+            errors.rejectValue("name", "brand.exist", "Brand with this name already exists");
         }
     }
 }

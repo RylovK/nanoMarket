@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 @Mapper(componentModel = "spring")
 public interface CategoryMapper {
 
-    @Mapping(source = "parent", target = "subcategories")
+    //@Mapping(source = "parent", target = "subcategories")
     CategoryDTO toDTO(Category category);
 
     Category toEntity(CategoryDTO categoryDTO);

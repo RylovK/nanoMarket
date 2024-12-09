@@ -19,6 +19,7 @@
 
     <modules>
         <module>ConfigServer</module>
+        <module>EurekaServer</module>
         <module>ProductService</module>
     </modules>
 
