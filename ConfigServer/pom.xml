@@ -58,6 +58,35 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
+
+            <plugin>
+                <groupId>io.fabric8</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <version>0.41.0</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>build</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <images>
+                        <image>
+                            <name>${project.groupId}/${project.artifactId}:${project.version}</name>
+                            <build>
+                                <dockerFile>${project.basedir}/Dockerfile</dockerFile>
+<!--                                <args>-->
+<!--                                    &lt;!&ndash; Путь к JAR-файлу для этого модуля &ndash;&gt;-->
+<!--                                    <JAR_FILE>${project.basedir}/target/${project.artifactId}-${project.version}.jar</JAR_FILE>-->
+<!--                                </args>-->
+                            </build>
+                        </image>
+                    </images>
+                </configuration>
+            </plugin>
+
         </plugins>
     </build>
     <repositories>
