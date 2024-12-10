@@ -7,6 +7,7 @@ import my.project.productservice.exception.CategoryNotFoundException;
 import my.project.productservice.mapper.CategoryMapper;
 import my.project.productservice.repository.CategoryRepository;
 import my.project.productservice.service.CategoryService;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +23,7 @@ public class CategoryServiceImpl implements CategoryService {
     private final CategoryMapper categoryMapper;
 
     @Override
+    @Cacheable("categoryListCache")
     public List<CategoryDTO> getAllParentCategoriesWithSubcategories() {
         List<Category> allParentCategories = categoryRepository.findAllByParentIsNull();
         return allParentCategories.stream().map(categoryMapper::toDTO).toList();
@@ -37,6 +39,10 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryDTO createCategory(CategoryDTO categoryDTO) {
         Category category = categoryMapper.toEntity(categoryDTO);
+        if (categoryDTO.getParentId() != null) {
+            Category parentCategory = categoryRepository.findById(categoryDTO.getId()).orElseThrow(CategoryNotFoundException::new);
+            category.setParent(parentCategory);
+        }
         return categoryMapper.toDTO(categoryRepository.save(category));
     }
 
