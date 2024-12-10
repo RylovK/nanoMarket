@@ -24,8 +24,8 @@ public class BrandController {
     private final BrandValidator brandValidator;
 
     @GetMapping
-    public ResponseEntity<Page<BrandDTO>> getAllBrands(@RequestParam(defaultValue = "0") int page,
-                                                       @RequestParam(defaultValue = "25") int size,
+    public ResponseEntity<Page<BrandDTO>> getAllBrands(@RequestParam(defaultValue = "0") Integer page,
+                                                       @RequestParam(defaultValue = "25") Integer size,
                                                        @RequestParam(required = false) String brandName) {
         Pageable pageable = PageRequest.of(page, size);
         Page<BrandDTO> allBrands = brandService.getAllBrands(brandName, pageable);
@@ -33,7 +33,7 @@ public class BrandController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<BrandDTO> getBrand(@PathVariable long id) {
+    public ResponseEntity<BrandDTO> getBrand(@PathVariable Long id) {
         BrandDTO brandById = brandService.getBrandById(id);
         return ResponseEntity.ok(brandById);
     }
@@ -50,26 +50,26 @@ public class BrandController {
     }
 
     @PostMapping("/{id}")
-    public ResponseEntity<BrandDTO> uploadBrandImage(@PathVariable long id,
+    public ResponseEntity<BrandDTO> uploadBrandImage(@PathVariable Long id,
                                                      @RequestParam("file") MultipartFile file) {
         return null; //TODO
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<BrandDTO> updateBrand(@PathVariable long id,
+    public ResponseEntity<BrandDTO> updateBrand(@PathVariable Long id,
                                                 @RequestBody @Valid BrandDTO brand,
                                                 BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             throw new ValidationErrorException(bindingResult);
         }
         BrandDTO updated = brandService.updateBrand(id, brand);
-        return new ResponseEntity<>(updated, HttpStatus.OK);
+        return ResponseEntity.ok(updated);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<BrandDTO> deleteBrand(@PathVariable long id) {
+    public ResponseEntity<BrandDTO> deleteBrand(@PathVariable Long id) {
         if (brandService.deleteBrand(id)) {
-            return new ResponseEntity<>(HttpStatus.OK);
+            return ResponseEntity.ok().build();
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }

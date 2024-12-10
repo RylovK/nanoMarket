@@ -7,15 +7,13 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Getter @Setter
 public class CategoryDTO {
 
-    private long id;
+    private Long id;
 
     @NotBlank(message = "Category name cannot be blank")
     @Size(min = 2, max = 25, message = "Category name must be between 2 and 25 symbols")
@@ -25,9 +23,9 @@ public class CategoryDTO {
     @Size(min = 10, max = 255, message = "Category description must be between 10 and 255 symbols")
     private String description;
 
-    private long parentId;
+    private Long parentId;
 
-    private List<CategoryDTO> subcategories = new ArrayList<>();
+    private Set<CategoryDTO> subcategories = new HashSet<>();
 
-    private Set<ProductDTO> products = new HashSet<>();
+    //private Set<ProductDTO> products = new HashSet<>(); TODO: нужен ли список продуктов?
 }
