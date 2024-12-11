@@ -92,9 +92,10 @@
                         <image>eclipse-temurin:17-jre-alpine</image>
                     </from>
                     <to>
-                        <image>${project.build.finalName}:${project.version}</image>
+                        <image>${project.build.finalName}</image>
                     </to>
                     <!-- Дополнительная конфигурация контейнера -->
+                    <!-- mvn compile jib:build -->
                     <container>
 
                         <mainClass>my.project.configserver.ConfigServerApplication</mainClass>
