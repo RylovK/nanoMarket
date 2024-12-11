@@ -24,9 +24,9 @@ public class BrandController {
     private final BrandValidator brandValidator;
 
     @GetMapping
-    public ResponseEntity<Page<BrandDTO>> getAllBrands(@RequestParam(defaultValue = "0") Integer page,
-                                                       @RequestParam(defaultValue = "25") Integer size,
-                                                       @RequestParam(required = false) String brandName) {
+    public ResponseEntity<Page<BrandDTO>> getAllBrands(@RequestParam(required = false) String brandName,
+                                                       @RequestParam(defaultValue = "0") Integer page,
+                                                       @RequestParam(defaultValue = "25") Integer size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<BrandDTO> allBrands = brandService.getAllBrands(brandName, pageable);
         return ResponseEntity.ok(allBrands);
