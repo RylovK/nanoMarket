@@ -1,6 +1,7 @@
 package my.project.productservice.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import my.project.productservice.dto.CategoryDTO;
 import my.project.productservice.entity.Category;
 import my.project.productservice.exception.CategoryNotFoundException;
@@ -17,6 +18,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Slf4j
 public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryRepository categoryRepository;
@@ -38,10 +40,13 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional
     @Override
     public CategoryDTO createCategory(CategoryDTO categoryDTO) {
+        log.info("Creating category: {} with parent: {}", categoryDTO.getName(), categoryDTO.getParentId());
         Category category = categoryMapper.toEntity(categoryDTO);
+
         if (categoryDTO.getParentId() != null) {
-            Category parentCategory = categoryRepository.findById(categoryDTO.getId()).orElseThrow(CategoryNotFoundException::new);
+            Category parentCategory = categoryRepository.findById(categoryDTO.getParentId()).orElseThrow(CategoryNotFoundException::new);
             category.setParent(parentCategory);
+            log.info("Category mapped: {} with parent: {}", category.getName(), category.getParent().getId());
         }
         return categoryMapper.toDTO(categoryRepository.save(category));
     }

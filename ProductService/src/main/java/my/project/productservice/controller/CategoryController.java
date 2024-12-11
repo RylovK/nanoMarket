@@ -53,6 +53,7 @@ public class CategoryController {
         if (bindingResult.hasErrors()) {
             throw new ValidationErrorException(bindingResult);
         }
+
         CategoryDTO updated = categoryService.updateCategory(id, categoryDTO);
         return ResponseEntity.ok(updated);
     }
