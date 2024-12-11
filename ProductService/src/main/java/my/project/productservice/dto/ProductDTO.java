@@ -4,8 +4,6 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
-import my.project.productservice.entity.Brand;
-import my.project.productservice.entity.Category;
 import my.project.productservice.entity.ProductImage;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -33,9 +31,9 @@ public class ProductDTO {
     @Min(value = 0, message = "Quantity must be 0 or more")
     private int quantity;
 
-    private Category category;
+    private CategoryDTO category;
 
-    private Brand brand;
+    private BrandDTO brand;
 
     @URL(message = "Invalid URL format")
     private ProductImage image;
