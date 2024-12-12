@@ -57,63 +57,76 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-
-<!--            <plugin>-->
-<!--                <groupId>com.spotify</groupId>-->
-<!--                <artifactId>dockerfile-maven-plugin</artifactId>-->
-<!--                <version>1.4.13</version>-->
-<!--                <configuration>-->
-<!--                    <repository>${docker.image.prefix}/${project.artifactId}</repository>-->
-<!--                    <tag>${project.version}</tag>-->
-<!--                    <buildArgs>-->
-<!--                        <JAR_FILE>target/${project.build.finalName}.jar</JAR_FILE>-->
-<!--                    </buildArgs>-->
-<!--                </configuration>-->
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <id>default</id>-->
-<!--                        <phase>install</phase>-->
-<!--                        <goals>-->
-<!--                            <goal>build</goal>-->
-<!--                            <goal>push</goal>-->
-<!--                        </goals>-->
-<!--                    </execution>-->
-<!--                </executions>-->
-<!--            </plugin>-->
-
-            <plugin>
-                <groupId>com.google.cloud.tools</groupId>
-                <artifactId>jib-maven-plugin</artifactId>
-                <version>3.3.1</version>
-                <configuration>
-                    <!-- Укажите имя и тег Docker-образа -->
-                    <from>
-                        <image>eclipse-temurin:17-jre-alpine</image>
-                    </from>
-                    <to>
-                        <image>${artifactId}</image>
-                    </to>
-                    <!-- Дополнительная конфигурация контейнера -->
-                    <!-- mvn compile jib:build -->
-                    <container>
-
-                        <mainClass>my.project.configserver.ConfigServerApplication</mainClass>
-                        <ports>
-                            <port>8071</port>
-                        </ports>
-                    </container>
-                </configuration>
+                <version>3.4.0</version>
                 <executions>
                     <execution>
-                        <phase>package</phase>
                         <goals>
-                            <goal>build</goal>
+                            <goal>repackage</goal>
                         </goals>
                     </execution>
                 </executions>
-<!--                mvn package-->
             </plugin>
+
+            <plugin>
+                <groupId>com.spotify</groupId>
+                <artifactId>dockerfile-maven-plugin</artifactId>
+                <version>1.4.13</version>
+                <configuration>
+<!--                    <repository>${docker.image.prefix}/${project.artifactId}</repository>-->
+                    <repository>${project.artifactId}</repository>
+                    <tag>${project.version}</tag>
+                    <buildArgs>
+                        <JAR_FILE>target/${project.build.finalName}.jar</JAR_FILE>
+                    </buildArgs>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>default</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>build</goal>
+                            <goal>push</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+<!--            <plugin>-->
+<!--                <groupId>com.google.cloud.tools</groupId>-->
+<!--                <artifactId>jib-maven-plugin</artifactId>-->
+<!--                <version>3.4.4</version>-->
+<!--                <configuration>-->
+<!--                    &lt;!&ndash; Укажите имя и тег Docker-образа &ndash;&gt;-->
+<!--                    <from>-->
+<!--                        <image>eclipse-temurin:17-jre-alpine</image>-->
+<!--                    </from>-->
+<!--                    <to>-->
+<!--                        <image>${project.artifactId}</image>-->
+<!--&lt;!&ndash;                        <image>hubproxy.docker.internal:5555/${project.artifactId}</image>&ndash;&gt;-->
+<!--                        <tags>-->
+<!--                            <tag>${project.version}</tag>-->
+<!--                        </tags>-->
+<!--                    </to>-->
+<!--                    &lt;!&ndash; Дополнительная конфигурация контейнера &ndash;&gt;-->
+<!--                    &lt;!&ndash; mvn compile jib:build &ndash;&gt;-->
+<!--                    <container>-->
+
+<!--                        <mainClass>my.project.configserver.ConfigServerApplication</mainClass>-->
+<!--                        <ports>-->
+<!--                            <port>8071</port>-->
+<!--                        </ports>-->
+<!--                    </container>-->
+<!--                </configuration>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <phase>package</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>dockerBuild</goal>-->
+<!--                        </goals>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--&lt;!&ndash;                mvn package&ndash;&gt;-->
+<!--            </plugin>-->
 
         </plugins>
     </build>

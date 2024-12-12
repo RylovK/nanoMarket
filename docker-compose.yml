@@ -62,14 +62,14 @@ services:
     networks:
       - backend
     environment:
-      - GIT_SSH_PRIVATE_KEY=${GIT_SSH_PRIVATE_KEY}
+#      - GIT_SSH_PRIVATE_KEY=${GIT_SSH_PRIVATE_KEY}
       - SPRING_PROFILES_ACTIVE=native
 
   eureka:
     image: nanomarket/eureka-server:latest
     container_name: eureka
     ports:
-      - "8761:8761"
+      - "8070:8070"
     depends_on:
       - configserver
     networks:
