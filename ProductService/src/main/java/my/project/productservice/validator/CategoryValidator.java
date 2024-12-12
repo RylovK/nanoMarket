@@ -15,6 +15,7 @@ import java.util.Optional;
 public class CategoryValidator implements Validator {
 
     private final CategoryRepository categoryRepository;
+
     @Override
     public boolean supports(Class<?> clazz) {
         return clazz.equals(Category.class);

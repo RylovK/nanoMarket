@@ -63,6 +63,6 @@ public class CategoryController {
         if (categoryService.deleteCategory(id)) {
             return ResponseEntity.ok().build();
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return ResponseEntity.notFound().build();
     }
 }

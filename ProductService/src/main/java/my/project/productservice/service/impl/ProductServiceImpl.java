@@ -2,11 +2,13 @@ package my.project.productservice.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import my.project.productservice.dto.ProductDTO;
+import my.project.productservice.dto.ProductReservationRequest;
 import my.project.productservice.entity.Brand;
 import my.project.productservice.entity.Category;
 import my.project.productservice.entity.Product;
 import my.project.productservice.exception.BrandNotFoundException;
 import my.project.productservice.exception.CategoryNotFoundException;
+import my.project.productservice.exception.OutOfStockException;
 import my.project.productservice.exception.ProductNotFoundException;
 import my.project.productservice.mapper.ProductMapper;
 import my.project.productservice.repository.BrandRepository;
@@ -20,6 +22,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -78,5 +81,17 @@ public class ProductServiceImpl implements ProductService {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void reserveProducts(List<ProductReservationRequest> reservationRequests) {
+        for (ProductReservationRequest reservationRequest : reservationRequests) {
+            Product product = productRepository.findById(reservationRequest.getProductId()).orElseThrow(ProductNotFoundException::new);
+            if (product.getQuantity() < reservationRequest.getQuantity()) {
+                throw new OutOfStockException("Product " + product.getName() + " is out of stock");
+            }
+            product.setQuantity(product.getQuantity() - reservationRequest.getQuantity());
+            productRepository.save(product);
+        }
     }
 }

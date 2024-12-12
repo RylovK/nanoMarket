@@ -71,6 +71,6 @@ public class BrandController {
         if (brandService.deleteBrand(id)) {
             return ResponseEntity.ok().build();
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return ResponseEntity.notFound().build();
     }
 }
