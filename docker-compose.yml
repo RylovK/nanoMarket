@@ -1,13 +1,79 @@
 #version: '3.8'
 
 services:
+  postgres:
+    image: postgres:17
+    container_name: postgres_container
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: nanomarket_db
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "5433:5432"
+    networks:
+      - backend
+    volumes:
+      - ./nanomarket_db_data:/var/lib/postgresql/data/pgdata
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+    command: >
+      postgres -c max_connections=1000
+               -c shared_buffers=256MB
+               -c effective_cache_size=768MB
+               -c maintenance_work_mem=64MB
+               -c checkpoint_completion_target=0.7
+               -c wal_buffers=16MB
+               -c default_statistics_target=100
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U root -d root" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    restart: unless-stopped
+    tty: true
+    stdin_open: true
+
+  minio:
+    image: minio/minio:latest
+    container_name: minio
+    environment:
+      MINIO_ACCESS_KEY: minioaccesskey
+      MINIO_SECRET_KEY: miniosecretkey
+    ports:
+      - "9000:9000"
+    command: server /data
+    networks:
+      - backend
+
   config-server:
     image: nanomarket/config-server:latest
+    container_name: config-server
     build:
       context: ./ConfigServer
-    container_name: config-server
     ports:
       - "8071:8071"
+    networks:
+      - backend
     environment:
       - GIT_SSH_PRIVATE_KEY=${GIT_SSH_PRIVATE_KEY}
       - SPRING_PROFILES_ACTIVE=native
+
+  eureka:
+    image: nanomarket/eureka-server:latest
+    container_name: eureka
+    ports:
+      - "8761:8761"
+    depends_on:
+      - configserver
+    networks:
+      - backend
+
+volumes:
+  nanomarket_db_data:
