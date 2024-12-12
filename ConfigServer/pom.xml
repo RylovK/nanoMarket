@@ -92,7 +92,7 @@
                         <image>eclipse-temurin:17-jre-alpine</image>
                     </from>
                     <to>
-                        <image>${project.build.finalName}</image>
+                        <image>${artifactId}</image>
                     </to>
                     <!-- Дополнительная конфигурация контейнера -->
                     <!-- mvn compile jib:build -->
@@ -104,6 +104,15 @@
                         </ports>
                     </container>
                 </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>build</goal>
+                        </goals>
+                    </execution>
+                </executions>
+<!--                mvn package-->
             </plugin>
 
         </plugins>
