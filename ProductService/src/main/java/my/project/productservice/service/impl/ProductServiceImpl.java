@@ -84,8 +84,10 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional
     public void reserveProducts(List<ProductReservationRequest> reservationRequests) {
         for (ProductReservationRequest reservationRequest : reservationRequests) {
+            System.out.println(reservationRequest.getProductId() + ": " + reservationRequest.getQuantity());
             Product product = productRepository.findById(reservationRequest.getProductId()).orElseThrow(ProductNotFoundException::new);
             if (product.getQuantity() < reservationRequest.getQuantity()) {
                 throw new OutOfStockException("Product " + product.getName() + " is out of stock");
