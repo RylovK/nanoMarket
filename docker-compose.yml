@@ -46,9 +46,13 @@ services:
     environment:
       MINIO_ACCESS_KEY: minioaccesskey
       MINIO_SECRET_KEY: miniosecretkey
+      MINIO_BUCKETS: BrandImage, ProductImage
     ports:
       - "9000:9000"
+    volumes:
+      - ./minio_data:/data
     command: server /data
+    restart: unless-stopped
     networks:
       - backend
 
@@ -77,3 +81,4 @@ services:
 
 volumes:
   nanomarket_db_data:
+  minio_data:

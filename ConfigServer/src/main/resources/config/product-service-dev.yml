@@ -17,6 +17,18 @@ spring:
     hibernate:
       ddl-auto: validate
 
+#  minio.access-key=minioaccesskey
+#  minio.secret-key=miniosecretkey
+#  minio.endpoint=http://localhost:9000
+#  minio.region=us-east-1
+minio:
+  access-key: minioaccesskey
+  secret-key: miniosecretkey
+  endpoint: http://localhost:9000
+  region: us-east-1
+
+
+
 eureka:
   instance:
     preferIpAddress: true
