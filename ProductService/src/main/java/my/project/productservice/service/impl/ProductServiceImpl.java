@@ -6,6 +6,7 @@ import my.project.productservice.dto.ProductReservationRequest;
 import my.project.productservice.entity.Brand;
 import my.project.productservice.entity.Category;
 import my.project.productservice.entity.Product;
+import my.project.productservice.entity.ProductImage;
 import my.project.productservice.exception.BrandNotFoundException;
 import my.project.productservice.exception.CategoryNotFoundException;
 import my.project.productservice.exception.OutOfStockException;
@@ -13,14 +14,17 @@ import my.project.productservice.exception.ProductNotFoundException;
 import my.project.productservice.mapper.ProductMapper;
 import my.project.productservice.repository.BrandRepository;
 import my.project.productservice.repository.CategoryRepository;
+import my.project.productservice.repository.ProductImageRepository;
 import my.project.productservice.repository.ProductRepository;
 import my.project.productservice.repository.specifications.ProductSpecification;
+import my.project.productservice.service.FileUploadService;
 import my.project.productservice.service.ProductService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
@@ -35,6 +39,8 @@ public class ProductServiceImpl implements ProductService {
     private final BrandRepository brandRepository;
     private final CategoryRepository categoryRepository;
     private final ProductMapper productMapper;
+    private final FileUploadService fileUploadService;
+    private final ProductImageRepository productImageRepository;
 
     @Override
     public Page<ProductDTO> getAllProducts(Map<String, String> filters, Pageable pageable) {
@@ -95,5 +101,18 @@ public class ProductServiceImpl implements ProductService {
             product.setQuantity(product.getQuantity() - reservationRequest.getQuantity());
             productRepository.save(product);
         }
+    }
+
+    @Override
+    @Transactional
+    public ProductDTO uploadImage(Long id, MultipartFile file) {
+        Product product = productRepository.findById(id).orElseThrow(ProductNotFoundException::new);
+        String url = fileUploadService.uploadFile(file, this.getClass().getSimpleName());
+        ProductImage productImage = new ProductImage();
+        productImage.setImageUrl(url);
+        productImage.setProduct(product);
+        product.getImages().add(productImage);
+        productImageRepository.save(productImage);
+        return productMapper.toProductDTO(productRepository.save(product));
     }
 }

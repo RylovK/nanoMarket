@@ -9,7 +9,7 @@ import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.model.*;
 
 
 import java.io.IOException;
@@ -44,6 +44,7 @@ public class MinioClientService implements FileUploadService {
     }
 
     public String uploadFile(MultipartFile file, String bucketName) {
+        createBucketIfNotExists(bucketName);
         String uniqueFileName = UUID.randomUUID() + "-" + file.getOriginalFilename();
         InputStream inputStream = null;
         try {
@@ -58,5 +59,27 @@ public class MinioClientService implements FileUploadService {
 
         s3Client.putObject(request, RequestBody.fromInputStream(inputStream, file.getSize()));
         return endpoint + "/" + bucketName + "/" + uniqueFileName;
+    }
+
+    private void createBucketIfNotExists(String bucketName) {
+        try {
+            // Проверяем существует ли бакет
+            HeadBucketRequest headBucketRequest = HeadBucketRequest.builder()
+                    .bucket(bucketName)
+                    .build();
+
+            s3Client.headBucket(headBucketRequest); // Если бакет существует, это не вызовет исключение
+        } catch (NoSuchBucketException e) {
+            // Если бакет не существует, создаем новый
+            CreateBucketRequest createBucketRequest = CreateBucketRequest.builder()
+                    .bucket(bucketName)
+                    .build();
+
+            s3Client.createBucket(createBucketRequest);
+            System.out.println("Бакет " + bucketName + " был успешно создан.");
+        } catch (S3Exception e) {
+            // Обработка других ошибок, например, если проблема с доступом
+            throw new RuntimeException("Ошибка при проверке или создании бакета: " + e.getMessage(), e);
+        }
     }
 }

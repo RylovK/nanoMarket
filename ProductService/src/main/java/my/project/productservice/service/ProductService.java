@@ -6,6 +6,7 @@ import my.project.productservice.dto.ProductReservationRequest;
 import my.project.productservice.exception.ProductNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
@@ -82,4 +83,6 @@ public interface ProductService {
      * @param reservationRequests list of products, containing product's id and quantity to be reserved
      */
     void reserveProducts(@Valid List<ProductReservationRequest> reservationRequests);
+
+    ProductDTO uploadImage(Long id, MultipartFile file);
 }
