@@ -81,6 +81,7 @@ public class ProductController {
     public ResponseEntity<ProductDTO> uploadProductImage(@PathVariable Long id,
                                                          @RequestBody MultipartFile file) {
         productService.uploadImage(id, file);
+        return null;
     }
 
 }

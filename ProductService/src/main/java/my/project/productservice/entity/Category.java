@@ -33,8 +33,8 @@ public class Category {
     @OneToMany(mappedBy = "parent")
     private Set<Category> subcategories = new HashSet<>();
 
-    @OneToMany(mappedBy = "category")
-    private Set<Product> products = new HashSet<>();
+//    @OneToMany(mappedBy = "category")
+//    private Set<Product> products = new HashSet<>();
 
     @Column(updatable = false)
     @CreationTimestamp

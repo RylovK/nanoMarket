@@ -11,8 +11,6 @@ services:
       PGDATA: /var/lib/postgresql/data/pgdata
     ports:
       - "5433:5432"
-    networks:
-      - backend
     volumes:
       - ./nanomarket_db_data:/var/lib/postgresql/data/pgdata
     deploy:
@@ -39,6 +37,8 @@ services:
     restart: unless-stopped
     tty: true
     stdin_open: true
+    networks:
+      - backend
 
   minio:
     image: minio/minio:latest
@@ -46,7 +46,7 @@ services:
     environment:
       MINIO_ACCESS_KEY: minioaccesskey
       MINIO_SECRET_KEY: miniosecretkey
-      MINIO_BUCKETS: BrandImage, ProductImage
+#      MINIO_BUCKETS: BrandImage, ProductImage
     ports:
       - "9000:9000"
     volumes:
@@ -61,6 +61,9 @@ services:
     container_name: config-server
     build:
       context: ./ConfigServer
+      dockerfile: Dockerfile
+    volumes:
+      - ./ConfigServer/src/main/resources/config:/app/config
     ports:
       - "8071:8071"
     networks:
@@ -72,13 +75,35 @@ services:
   eureka:
     image: nanomarket/eureka-server:latest
     container_name: eureka
+    build:
+      context: ./EurekaServer
+      dockerfile: Dockerfile
     ports:
       - "8070:8070"
     depends_on:
-      - configserver
+      - config-server
     networks:
       - backend
+
+  product-service:
+    image: nanomarket/config-server:latest
+    container_name: product-service
+    build:
+      context: ./ProductService
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
+    depends_on:
+      - eureka
+      - postgres
+      - minio
+    networks:
+      - backend
+
 
 volumes:
   nanomarket_db_data:
   minio_data:
+networks:
+  backend:
+    driver: bridge

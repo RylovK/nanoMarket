@@ -5,3 +5,11 @@ spring:
     import: configserver:http://localhost:8071
   profiles:
     active: dev
+  cloud:
+    config:
+      fail-fast: true
+      retry:
+        initial-interval: 2000
+        max-attempts: 10
+        multiplier: 1.5
+        max-interval: 10000
