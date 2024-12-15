@@ -6,7 +6,8 @@ WORKDIR /app
 
 # Копируем заранее собранный JAR файл в контейнер
 COPY target/config-server*.jar app.jar
-COPY src/main/resources/config /app/config
+#COPY src/main/resources/config /app/config
+COPY src/main/resources/application.yml /app/config/
 
 # Открываем порт (если требуется)
 EXPOSE 8071

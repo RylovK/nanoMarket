@@ -2,7 +2,7 @@ spring:
   application:
     name: eureka-server
   config:
-    import: configserver:http://localhost:8071
+    import: configserver:http://config-server:8071
   profiles:
     active: dev
   cloud:

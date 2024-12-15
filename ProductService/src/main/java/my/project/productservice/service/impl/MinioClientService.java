@@ -21,26 +21,31 @@ import java.util.UUID;
 @Service
 public class MinioClientService implements FileUploadService {
 
-    @Value("${minio.access-key}")
-    private String accessKey;
-
-    @Value("${minio.secret-key}")
-    private String secretKey;
-
-    @Value("${minio.endpoint}")
-    private String endpoint;
-
-    @Value("${minio.region}")
-    private String region;
+//    @Value("${minio.access-key}")
+//    private String accessKey;
+//
+//    @Value("${minio.secret-key}")
+//    private String secretKey;
+//
+//    @Value("${minio.endpoint}")
+    private final String endpoint;
+//
+//    @Value("${minio.region}")
+//    private String region;
 
     private final S3Client s3Client;
 
-    public MinioClientService() {
+    public MinioClientService(
+            @Value("${minio.access-key}") String accessKey,
+            @Value("${minio.secret-key}") String secretKey,
+            @Value("${minio.endpoint}") String endpoint,
+            @Value("${minio.region}") String region) {
         this.s3Client = S3Client.builder()
                 .endpointOverride(URI.create(endpoint))
                 .credentialsProvider(() -> AwsBasicCredentials.create(accessKey, secretKey))
                 .region(Region.of(region))
                 .build();
+        this.endpoint = endpoint;
     }
 
     public String uploadFile(MultipartFile file, String bucketName) {

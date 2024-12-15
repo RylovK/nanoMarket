@@ -1,20 +1,23 @@
 spring:
   application:
     name: config-server
+  profiles:
+    active: git
+
   cloud:
     config:
       server:
-        native:
-          search-locations: file:/app/config
+#        native:
+#          search-locations: file:/app/config
         #          search-locations: file:./src/main/resources/config
-#        git:
-#          uri: git@github.com:RylovK/nanomarket-config-repo.git
-#            #           private-key: ${GIT_SSH_PRIVATE_KEY}
-#          clone-on-start: true
-#          search-paths: config
-        bootstrap: true
-  profiles:
-    active: native
+        git:
+          uri: https://github.com/RylovK/nanomarket-config-repo.git
+          username: RylovK
+          password: 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
+        #            #           private-key: ${GIT_SSH_PRIVATE_KEY}
+          clone-on-start: true
+          search-paths: config
+          default-label: main
 
 
 server:
@@ -25,3 +28,32 @@ management:
     env:
       post:
         enabled: true
+
+#spring:
+#  application:
+#    name: config-server
+#  profiles:
+#    active:
+#      - native, git
+#  cloud:
+#    config:
+#      server:
+#        native:
+#          search-locations: classpath:/config
+#          #git:
+#          # uri: https://github.com/ihuaylupo/config.git
+#          #searchPaths: licensingservice
+#
+#server:
+#  port: 8071
+#
+#encrypt:
+#  key: fje83Ki8403Iod87dne7Yjsl3THueh48jfuO9j4U2hf64Lo
+#
+#
+##Enable all Spring Boot Actuator endpoints.
+#management:
+#  endpoints:
+#    web:
+#      exposure:
+#        include: "*"

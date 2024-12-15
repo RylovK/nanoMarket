@@ -2,7 +2,7 @@ spring:
   application:
     name: product-service
   config:
-    import: configserver:http://localhost:8071
+    import: configserver:http://config-server:8071
   profiles:
     active: dev
   liquibase:

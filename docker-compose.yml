@@ -30,7 +30,7 @@ services:
                -c wal_buffers=16MB
                -c default_statistics_target=100
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U root -d root" ]
+      test: [ "CMD-SHELL", "pg_isready -U root -d nanomarket_db" ]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -49,6 +49,7 @@ services:
 #      MINIO_BUCKETS: BrandImage, ProductImage
     ports:
       - "9000:9000"
+
     volumes:
       - ./minio_data:/data
     command: server /data
@@ -62,15 +63,18 @@ services:
     build:
       context: ./ConfigServer
       dockerfile: Dockerfile
-    volumes:
-      - ./ConfigServer/src/main/resources/config:/app/config
+#    volumes:
+#      - ./ConfigServer/src/main/resources/config:/app/config
     ports:
       - "8071:8071"
     networks:
       - backend
     environment:
 #      - GIT_SSH_PRIVATE_KEY=${GIT_SSH_PRIVATE_KEY}
-      - SPRING_PROFILES_ACTIVE=native
+      - SPRING_PROFILES_ACTIVE=git
+      - SPRING_CLOUD_CONFIG_SERVER_GIT_URI=https://github.com/RylovK/nanomarket-config-repo.git
+      - SPRING_CLOUD_CONFIG_SERVER_GIT_USERNAME=RylovK
+      - SPRING_CLOUD_CONFIG_SERVER_GIT_PASSWORD=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
 
   eureka:
     image: nanomarket/eureka-server:latest
@@ -84,9 +88,12 @@ services:
       - config-server
     networks:
       - backend
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+    restart: on-failure
 
   product-service:
-    image: nanomarket/config-server:latest
+    image: nanomarket/productservice:latest
     container_name: product-service
     build:
       context: ./ProductService
@@ -94,11 +101,15 @@ services:
     ports:
       - "8081:8081"
     depends_on:
+      - config-server
       - eureka
       - postgres
       - minio
     networks:
       - backend
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+    restart: on-failure
 
 
 volumes:
