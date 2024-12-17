@@ -3,6 +3,8 @@ package my.project.orderservice.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import my.project.orderservice.dto.OrderDTO;
+import my.project.orderservice.dto.OrderRequest;
+import my.project.orderservice.entity.Order;
 import my.project.orderservice.mapper.OrderMapper;
 import my.project.orderservice.service.OrderService;
 import org.springframework.http.ResponseEntity;
@@ -29,13 +31,15 @@ public class OrderController {
     }
 
     @PostMapping
-    public ResponseEntity<OrderDTO> createOrder(@RequestBody @Valid OrderDTO orderDTO) {
-        return null;
+    public ResponseEntity<OrderDTO> createOrder(@RequestBody @Valid OrderRequest orderRequest) {
+        OrderDTO order = orderService.createOrder(orderRequest);
+        return ResponseEntity.ok(order);
     }
 
     @PutMapping("/{orderId}")
     public ResponseEntity<OrderDTO> updateOrder(@PathVariable UUID orderId,
-                                                @RequestBody @Valid OrderDTO orderDTO) {
+                                                @RequestBody Order.Status status) {
+
         return null;
     }
 

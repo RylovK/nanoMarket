@@ -27,5 +27,7 @@ public class Cart implements Serializable {
     @NotNull(message = "Items map cannot be null")
     private Map<Long, @Min(1) Integer> items = new HashMap<>();
 
+    //TODO: нужен ли customerId?
+
     private LocalDateTime lastUpdated = LocalDateTime.now();
 }

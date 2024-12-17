@@ -2,9 +2,7 @@ package my.project.productservice.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import my.project.productservice.dto.ProductAvailabilityDTO;
 import my.project.productservice.dto.ProductDTO;
-import my.project.productservice.dto.ProductReservationRequest;
 import my.project.productservice.exception.ValidationErrorException;
 import my.project.productservice.service.ProductService;
 import my.project.productservice.validator.ProductValidator;
@@ -16,7 +14,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
 import java.util.Map;
 
 @RestController

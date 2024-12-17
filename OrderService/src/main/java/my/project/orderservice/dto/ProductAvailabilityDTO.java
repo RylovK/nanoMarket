@@ -1,11 +1,11 @@
-package my.project.productservice.dto;
+package my.project.orderservice.dto;
+
 
 import lombok.Getter;
-import lombok.Setter;
 
 import java.math.BigDecimal;
 
-@Getter @Setter
+@Getter
 public class ProductAvailabilityDTO {
 
     private Long id;
@@ -14,3 +14,5 @@ public class ProductAvailabilityDTO {
 
     private Integer quantity;
 }
+
+
