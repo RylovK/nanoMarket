@@ -1,5 +1,6 @@
 package my.project.productservice.mapper;
 
+import my.project.productservice.dto.ProductAvailabilityDTO;
 import my.project.productservice.dto.ProductDTO;
 import my.project.productservice.entity.Product;
 import org.mapstruct.Mapper;
@@ -16,4 +17,6 @@ public interface ProductMapper {
 
     @Mapping(target = "id", ignore = true)
     Product updateProductDTO(ProductDTO productDTO, @MappingTarget Product product);
+
+    ProductAvailabilityDTO toProductAvailabilityDTO(Product product);
 }

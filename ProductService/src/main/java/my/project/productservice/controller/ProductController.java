@@ -2,6 +2,7 @@ package my.project.productservice.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import my.project.productservice.dto.ProductAvailabilityDTO;
 import my.project.productservice.dto.ProductDTO;
 import my.project.productservice.dto.ProductReservationRequest;
 import my.project.productservice.exception.ValidationErrorException;
@@ -41,6 +42,8 @@ public class ProductController {
         return ResponseEntity.ok(productDTO);
     }
 
+
+
     @PostMapping
     public ResponseEntity<ProductDTO> createProduct(@RequestBody @Valid ProductDTO productDTO,
                                                     BindingResult bindingResult) {
@@ -71,17 +74,11 @@ public class ProductController {
         return ResponseEntity.notFound().build();
     }
 
-    @PostMapping("/reserve")
-    public ResponseEntity<Void> reserveProducts(@RequestBody @Valid List<ProductReservationRequest> reservationRequests) {
-        productService.reserveProducts(reservationRequests);
-        return ResponseEntity.ok().build();
-    }
-
     @PostMapping("/{id}")
     public ResponseEntity<ProductDTO> uploadProductImage(@PathVariable Long id,
                                                          @RequestBody MultipartFile file) {
-        productService.uploadImage(id, file);
-        return null;
+        ProductDTO updated = productService.uploadImage(id, file);
+        return ResponseEntity.ok(updated);
     }
 
 }

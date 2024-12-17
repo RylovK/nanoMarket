@@ -1,6 +1,7 @@
 package my.project.productservice.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import my.project.productservice.dto.ProductAvailabilityDTO;
 import my.project.productservice.dto.ProductDTO;
 import my.project.productservice.dto.ProductReservationRequest;
 import my.project.productservice.entity.Brand;
@@ -87,6 +88,11 @@ public class ProductServiceImpl implements ProductService {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public ProductAvailabilityDTO getProductAvailability(Long id) {
+        return productMapper.toProductAvailabilityDTO(productRepository.findById(id).orElseThrow(ProductNotFoundException::new));
     }
 
     @Override

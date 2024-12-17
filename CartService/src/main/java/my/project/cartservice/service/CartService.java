@@ -2,6 +2,7 @@ package my.project.cartservice.service;
 
 import lombok.RequiredArgsConstructor;
 import my.project.cartservice.dto.CartUpdateRequest;
+import my.project.cartservice.dto.ProductAvailabilityDTO;
 import my.project.cartservice.entity.Cart;
 import my.project.cartservice.repository.CartRepository;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,7 @@ import java.time.LocalDateTime;
 public class CartService {
 
     private final CartRepository cartRepository;
+    private final ProductFeignClient productFeignClient;
 
     public Cart getCart(Long cartId) {
         return cartRepository.findById(cartId).orElseGet(() -> {
@@ -24,6 +26,15 @@ public class CartService {
     }
 
     public void updateCart(CartUpdateRequest request) {
+        ProductAvailabilityDTO product = productFeignClient.getProductAvailability(request.getProductId());
+
+        if (product == null) {
+            throw new IllegalArgumentException("Product not found: " + request.getProductId());
+        }
+        if (request.getQuantity() > product.getQuantity()) {
+            throw new IllegalArgumentException("Not enough stock for product: " + request.getProductId());
+        }
+
         Cart cart = getCart(request.getCartId());
 
         if (request.getQuantity() > 0) {

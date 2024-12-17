@@ -1,6 +1,7 @@
 package my.project.productservice.service;
 
 import jakarta.validation.Valid;
+import my.project.productservice.dto.ProductAvailabilityDTO;
 import my.project.productservice.dto.ProductDTO;
 import my.project.productservice.dto.ProductReservationRequest;
 import my.project.productservice.exception.ProductNotFoundException;
@@ -77,12 +78,16 @@ public interface ProductService {
      */
     boolean deleteProduct(Long id);
 
+    ProductAvailabilityDTO getProductAvailability(Long id);
+
     /**
      * Method for check on stock quantity and reserve products
      *
      * @param reservationRequests list of products, containing product's id and quantity to be reserved
      */
     void reserveProducts(@Valid List<ProductReservationRequest> reservationRequests);
+
+
 
     ProductDTO uploadImage(Long id, MultipartFile file);
 }

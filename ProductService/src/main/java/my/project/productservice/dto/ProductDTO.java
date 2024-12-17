@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 @Getter @Setter
 public class ProductDTO {
 
-    private long id;
+    private Long id;
 
     @NotBlank(message = "Product name cannot be blank")
     @Size(min = 1, max = 25, message = "Product name must be between 1 and 25 symbols")
@@ -29,7 +29,7 @@ public class ProductDTO {
 
     @NotNull(message = "Quantity cannot be null")
     @Min(value = 0, message = "Quantity must be 0 or more")
-    private int quantity;
+    private Integer quantity;
 
     private CategoryDTO category;
 
