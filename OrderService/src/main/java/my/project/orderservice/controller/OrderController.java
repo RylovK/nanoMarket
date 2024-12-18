@@ -5,11 +5,12 @@ import lombok.RequiredArgsConstructor;
 import my.project.orderservice.dto.OrderDTO;
 import my.project.orderservice.dto.OrderRequest;
 import my.project.orderservice.entity.Order;
-import my.project.orderservice.mapper.OrderMapper;
 import my.project.orderservice.service.OrderService;
+import my.project.orderservice.service.ProductReservationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -17,23 +18,26 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class OrderController {
 
-    private final OrderMapper orderMapper;
+    private final ProductReservationService productReservationService;
     private final OrderService orderService;
 
     @GetMapping("/{orderId}")
     public ResponseEntity<OrderDTO> getOrder(@PathVariable UUID orderId) {
-        return null;
+        OrderDTO founded = orderService.getOrderById(orderId);
+        return ResponseEntity.ok(founded);
     }
 
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<OrderDTO> getOrderByUserId(@PathVariable Long userId) {
-        return null;
+    @GetMapping("/user/{customerId}")
+    public ResponseEntity<List<OrderDTO>> getOrdersByCustomerId(@PathVariable Long customerId) {
+        List<OrderDTO> ordersList = orderService.getOrdersByCustomerId(customerId);
+        return ResponseEntity.ok(ordersList);
     }
 
     @PostMapping
     public ResponseEntity<OrderDTO> createOrder(@RequestBody @Valid OrderRequest orderRequest) {
-        OrderDTO order = orderService.createOrder(orderRequest);
-        return ResponseEntity.ok(order);
+        Order order = productReservationService.checkStockAndReserveProducts(orderRequest);
+        OrderDTO dto = orderService.createOrder(order);
+        return ResponseEntity.ok(dto);
     }
 
     @PutMapping("/{orderId}")
