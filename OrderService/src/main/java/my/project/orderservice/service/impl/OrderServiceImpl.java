@@ -1,5 +1,6 @@
 package my.project.orderservice.service.impl;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import my.project.orderservice.dto.*;
@@ -31,6 +32,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+
     public OrderDTO getOrderById(UUID orderId) {
         return orderMapper.toOrderDTO(orderRepository.findById(orderId)
                 .orElseThrow(EntityNotFoundException::new));
@@ -44,11 +46,12 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @CircuitBreaker(name = "orderServiceUpdate")
     public OrderDTO updateOrderStatus(UUID orderId, Order.Status newStatus) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(EntityNotFoundException::new);
         order.setStatus(newStatus);
-        //TODO: add logic for statuses processing
+        //TODO: add logic for statuses processing(message sending?)
         return orderMapper.toOrderDTO(orderRepository.save(order));
     }
 

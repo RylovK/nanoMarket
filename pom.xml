@@ -16,6 +16,7 @@
         <java.version>17</java.version>
         <spring-cloud.version>2024.0.0</spring-cloud.version>
         <docker.image.prefix>nanomarket</docker.image.prefix>
+        <resilience4jVersion>2.2.0</resilience4jVersion>
     </properties>
 
     <modules>
