@@ -49,6 +49,7 @@ public class Order {
         PROCESSING,
         SHIPPED,
         DELIVERED,
-        CANCELLED
+        CANCELLED,
+        DELETED
     }
 }

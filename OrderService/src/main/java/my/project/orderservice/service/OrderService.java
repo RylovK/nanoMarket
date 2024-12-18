@@ -14,4 +14,8 @@ public interface OrderService {
     OrderDTO getOrderById(UUID orderId);
 
     List<OrderDTO> getOrdersByCustomerId(Long userId);
+
+    OrderDTO updateOrderStatus(UUID orderId, Order.Status newStatus);
+
+    boolean deleteOrder(UUID orderId);
 }

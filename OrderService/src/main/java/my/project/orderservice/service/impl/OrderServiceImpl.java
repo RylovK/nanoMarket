@@ -10,8 +10,8 @@ import my.project.orderservice.service.OrderService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -40,5 +40,25 @@ public class OrderServiceImpl implements OrderService {
         return orderRepository.findByCustomerId(customerId).stream()
                 .map(orderMapper::toOrderDTO)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public OrderDTO updateOrderStatus(UUID orderId, Order.Status newStatus) {
+        Order order = orderRepository.findById(orderId).orElseThrow(EntityNotFoundException::new);
+        order.setStatus(newStatus);
+        //TODO: add logic for statuses processing
+        return orderMapper.toOrderDTO(orderRepository.save(order));
+    }
+
+    @Override
+    public boolean deleteOrder(UUID orderId) {
+        Optional<Order> byId = orderRepository.findById(orderId);
+        if (byId.isPresent()) {
+            Order order = byId.get();
+            order.setStatus(Order.Status.DELETED);
+            orderRepository.save(order);
+            return true;
+        }
+        return false;
     }
 }
