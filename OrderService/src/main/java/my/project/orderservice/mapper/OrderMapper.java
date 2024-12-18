@@ -13,7 +13,7 @@ public interface OrderMapper {
     @Mapping(target = "items", source = "items")
     OrderDTO toOrderDTO(Order order);
 
-    @Mapping(target = "order", ignore = true)
+//    @Mapping(target = "order", ignore = true)
     OrderItemDTO toOrderItemDTO(OrderItem orderItem);
 
     @Mapping(target = "items", source = "items")
