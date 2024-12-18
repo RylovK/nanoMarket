@@ -23,6 +23,7 @@
         <module>EurekaServer</module>
         <module>ProductService</module>
         <module>CartService</module>
+        <module>OrderService</module>
     </modules>
 
     <dependencyManagement>

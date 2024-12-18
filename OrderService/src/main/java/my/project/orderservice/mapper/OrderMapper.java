@@ -10,15 +10,12 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface OrderMapper {
 
-//    OrderMapper INSTANCE = Mappers.getMapper(OrderMapper.class);
-
     @Mapping(target = "items", source = "items")
     OrderDTO toOrderDTO(Order order);
 
-    @Mapping(target = "order", ignore = true) // Избегаем циклических зависимостей
+    @Mapping(target = "order", ignore = true)
     OrderItemDTO toOrderItemDTO(OrderItem orderItem);
 
-    // Метод для обратного маппинга (DTO -> Entity), если это необходимо
     @Mapping(target = "items", source = "items")
     Order toOrderEntity(OrderDTO orderDTO);
 

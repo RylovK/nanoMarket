@@ -45,6 +45,7 @@ public class ProductReservationServiceImpl implements ProductReservationService 
                 item.setPrice(availability.getPrice());
                 item.setOrder(order);
                 order.getItems().add(item);
+                order.setTotal(order.getTotal().add(availability.getPrice()));
 
                 ProductReservationRequest request = new ProductReservationRequest();
                 request.setProductId(productId);

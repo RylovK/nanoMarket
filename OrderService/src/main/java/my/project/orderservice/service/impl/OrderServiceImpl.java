@@ -32,7 +32,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderDTO getOrderById(UUID orderId) {
-        return orderMapper.toOrderDTO(orderRepository.findById(orderId).orElseThrow(EntityNotFoundException::new));
+        return orderMapper.toOrderDTO(orderRepository.findById(orderId)
+                .orElseThrow(EntityNotFoundException::new));
     }
 
     @Override
@@ -44,7 +45,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderDTO updateOrderStatus(UUID orderId, Order.Status newStatus) {
-        Order order = orderRepository.findById(orderId).orElseThrow(EntityNotFoundException::new);
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(EntityNotFoundException::new);
         order.setStatus(newStatus);
         //TODO: add logic for statuses processing
         return orderMapper.toOrderDTO(orderRepository.save(order));
