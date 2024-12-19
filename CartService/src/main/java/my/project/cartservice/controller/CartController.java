@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import my.project.cartservice.dto.CartUpdateRequest;
 import my.project.cartservice.entity.Cart;
 import my.project.cartservice.service.CartService;
+import my.project.cartservice.service.impl.CartServiceImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

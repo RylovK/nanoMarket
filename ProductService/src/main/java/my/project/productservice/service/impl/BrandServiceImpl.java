@@ -2,6 +2,7 @@ package my.project.productservice.service.impl;
 
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import my.project.productservice.dto.BrandDTO;
 import my.project.productservice.entity.Brand;
 import my.project.productservice.exception.BrandNotFoundException;
@@ -21,6 +22,7 @@ import java.util.Optional;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
+@Slf4j
 public class BrandServiceImpl implements BrandService {
 
     private final BrandRepository brandRepository;
@@ -28,13 +30,15 @@ public class BrandServiceImpl implements BrandService {
 
     @Override
     public Page<BrandDTO> getAllBrands(String brandName, Pageable pageable) {
+        log.debug("Getting all brands");
         if (brandName == null) return brandRepository.findAll(pageable).map(brandMapper::toDto);
         Specification<Brand> specification = (root, criteriaQuery, criteriaBuilder) -> criteriaBuilder.like(criteriaBuilder.lower(root.get("brandName")), "%" + brandName + "%");
         return brandRepository.findAll(specification, pageable).map(brandMapper::toDto);
     }
 
     @Override
-    public BrandDTO getBrandById(long id) throws BrandNotFoundException {
+    public BrandDTO getBrandById(long id) {
+        log.debug("Getting brand {}", id);
         return brandRepository.findById(id)
                 .map(brandMapper::toDto)
                 .orElseThrow(BrandNotFoundException::new);
@@ -44,17 +48,19 @@ public class BrandServiceImpl implements BrandService {
     @Override
     public BrandDTO createBrand(BrandDTO brandDTO) {
         Brand saved = brandRepository.save(brandMapper.toEntity(brandDTO));
+        log.info("Created brand {}", saved.getBrandName());
         return brandMapper.toDto(saved);
     }
 
     @Transactional
     @Override
-    public BrandDTO updateBrand(long id, BrandDTO brandDTO) throws BrandNotFoundException {
+    public BrandDTO updateBrand(long id, BrandDTO brandDTO) {
         Optional<Brand> byId = brandRepository.findById(id);
         if (byId.isEmpty()) throw new BrandNotFoundException();
         Brand existing = byId.get();
         Brand updatedBrand = brandMapper.updateBrand(brandDTO, existing);
         Brand saved = brandRepository.save(updatedBrand);
+        log.info("Updated brand {}", saved.getBrandName());
         return brandMapper.toDto(saved);
     }
 
@@ -64,6 +70,7 @@ public class BrandServiceImpl implements BrandService {
         Optional<Brand> byId = brandRepository.findById(id);
         if (byId.isPresent()) {
             brandRepository.deleteById(id);
+            log.info("Deleted brand {}", id);
             return true;
         }
         return false;

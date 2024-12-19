@@ -27,6 +27,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     @Cacheable("categoryListCache")
     public List<CategoryDTO> getAllParentCategoriesWithSubcategories() {
+        log.debug("Getting all categories with subcategories");
         List<Category> allParentCategories = categoryRepository.findAllByParentIsNull();
         return allParentCategories.stream().map(categoryMapper::toDTO).toList();
 
@@ -34,20 +35,22 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryDTO getCategoryById(Long id) throws CategoryNotFoundException {
+        log.debug("Getting category with id {}", id);
         return categoryMapper.toDTO(categoryRepository.findById(id).orElseThrow(CategoryNotFoundException::new));
     }
 
     @Transactional
     @Override
     public CategoryDTO createCategory(CategoryDTO categoryDTO) {
-        log.info("Creating category: {} with parent: {}", categoryDTO.getName(), categoryDTO.getParentId());
+        log.debug("Creating category: {} with parent: {}", categoryDTO.getName(), categoryDTO.getParentId());
         Category category = categoryMapper.toEntity(categoryDTO);
 
         if (categoryDTO.getParentId() != null) {
             Category parentCategory = categoryRepository.findById(categoryDTO.getParentId()).orElseThrow(CategoryNotFoundException::new);
             category.setParent(parentCategory);
-            log.info("Category mapped: {} with parent: {}", category.getName(), category.getParent().getId());
+            log.info("Category mapped: {} with parent: {}", category.getName(), category.getParent().getName());
         }
+        log.info("Category created: {}", category.getName());
         return categoryMapper.toDTO(categoryRepository.save(category));
     }
 
@@ -56,6 +59,7 @@ public class CategoryServiceImpl implements CategoryService {
     public CategoryDTO updateCategory(Long id, CategoryDTO categoryDTO) throws CategoryNotFoundException {
         Category category = categoryRepository.findById(id).orElseThrow(CategoryNotFoundException::new);
         Category updated = categoryMapper.updateCategory(categoryDTO, category);
+        log.info("Category updated: {}", updated.getName());
         return categoryMapper.toDTO(updated);
     }
 
@@ -67,6 +71,7 @@ public class CategoryServiceImpl implements CategoryService {
             Category categoryToDelete = category.get();
             categoryRepository.deleteAll(categoryToDelete.getSubcategories());
             categoryRepository.delete(categoryToDelete);
+            log.info("Category with id {} deleted", id);
             return true;
         }
         return false;

@@ -1,5 +1,6 @@
 package my.project.productservice.service.impl;
 
+import lombok.extern.slf4j.Slf4j;
 import my.project.productservice.service.FileUploadService;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -17,11 +18,11 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.UUID;
 
-
 @Service
+@Slf4j
 public class MinioClientService implements FileUploadService {
 
-//    @Value("${minio.access-key}")
+    //    @Value("${minio.access-key}")
 //    private String accessKey;
 //
 //    @Value("${minio.secret-key}")
@@ -48,6 +49,7 @@ public class MinioClientService implements FileUploadService {
         this.endpoint = endpoint;
     }
 
+    @Override
     public String uploadFile(MultipartFile file, String bucketName) {
         createBucketIfNotExists(bucketName);
         String uniqueFileName = UUID.randomUUID() + "-" + file.getOriginalFilename();
@@ -63,28 +65,26 @@ public class MinioClientService implements FileUploadService {
                 .build();
 
         s3Client.putObject(request, RequestBody.fromInputStream(inputStream, file.getSize()));
+        log.info("File {} uploaded successfully", file.getOriginalFilename());
         return endpoint + "/" + bucketName + "/" + uniqueFileName;
     }
 
     private void createBucketIfNotExists(String bucketName) {
         try {
-            // Проверяем существует ли бакет
             HeadBucketRequest headBucketRequest = HeadBucketRequest.builder()
                     .bucket(bucketName)
                     .build();
 
-            s3Client.headBucket(headBucketRequest); // Если бакет существует, это не вызовет исключение
+            s3Client.headBucket(headBucketRequest);
         } catch (NoSuchBucketException e) {
-            // Если бакет не существует, создаем новый
             CreateBucketRequest createBucketRequest = CreateBucketRequest.builder()
                     .bucket(bucketName)
                     .build();
 
             s3Client.createBucket(createBucketRequest);
-            System.out.println("Бакет " + bucketName + " был успешно создан.");
+            log.info("Bucket created: {}", bucketName);
         } catch (S3Exception e) {
-            // Обработка других ошибок, например, если проблема с доступом
-            throw new RuntimeException("Ошибка при проверке или создании бакета: " + e.getMessage(), e);
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 }

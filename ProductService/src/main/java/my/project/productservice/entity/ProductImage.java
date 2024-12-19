@@ -3,10 +3,6 @@ package my.project.productservice.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-
-import java.time.LocalDateTime;
 
 @Entity @Getter @Setter
 public class ProductImage {
@@ -21,12 +17,4 @@ public class ProductImage {
 
     @Column(nullable = false)
     private String imageUrl;
-
-    @Column(updatable = false)
-    @CreationTimestamp
-    private LocalDateTime createdAt;
-
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
-
 }

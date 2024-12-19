@@ -1,6 +1,8 @@
 package my.project.productservice.util;
 
+import my.project.productservice.exception.BrandNotFoundException;
 import my.project.productservice.exception.ValidationErrorException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -27,5 +29,13 @@ public class GlobalExceptionHandler {
                 errors.put(error.getField(), error.getDefaultMessage()));
         return ResponseEntity.badRequest().body(errors);
     }
+
+
+    @ExceptionHandler(BrandNotFoundException.class)
+    public ResponseEntity<String> handleBrandNotFoundException(BrandNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Brand not found");
+
+    }
+
 
 }

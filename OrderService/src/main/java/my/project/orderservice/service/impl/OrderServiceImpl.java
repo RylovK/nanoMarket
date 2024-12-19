@@ -3,6 +3,7 @@ package my.project.orderservice.service.impl;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import my.project.orderservice.dto.*;
 import my.project.orderservice.entity.Order;
 import my.project.orderservice.mapper.OrderMapper;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
+@Slf4j
 public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
@@ -28,11 +30,11 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public OrderDTO createOrder(Order order) {
         Order saved = orderRepository.save(order);
+        log.info("Order {} created for customer: {}", saved.getOrderId(), order.getCustomerId());
         return orderMapper.toOrderDTO(saved);
     }
 
     @Override
-
     public OrderDTO getOrderById(UUID orderId) {
         return orderMapper.toOrderDTO(orderRepository.findById(orderId)
                 .orElseThrow(EntityNotFoundException::new));
@@ -46,7 +48,6 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @CircuitBreaker(name = "orderServiceUpdate")
     public OrderDTO updateOrderStatus(UUID orderId, Order.Status newStatus) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(EntityNotFoundException::new);

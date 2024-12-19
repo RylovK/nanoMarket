@@ -24,7 +24,7 @@ public class ProductSpecification {
                 switch (key) {
                     case "name" -> {
                         predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), "%" + value + "%"));
-                        predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("description")), "%" + value + "%"));
+//                        predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("description")), "%" + value + "%"));
                     }
                     case "categoryId" ->
                             predicates.add(criteriaBuilder.equal(root.get("category").get("id"), Long.parseLong(value)));

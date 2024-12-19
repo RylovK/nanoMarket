@@ -1,0 +1,2 @@
+categoryListCache @ categoryService
+create index for db (liquibase)

@@ -22,8 +22,8 @@ public class Brand {
 
     private String logoUrl;
 
-    @OneToMany(mappedBy = "brand")
-    private Set<Product> products = new HashSet<>();
+//    @OneToMany(mappedBy = "brand")
+//    private Set<Product> products = new HashSet<>();
 
     @Column(updatable = false)
     @CreationTimestamp

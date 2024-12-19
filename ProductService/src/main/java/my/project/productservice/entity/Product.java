@@ -24,7 +24,6 @@ public class Product {
 
     @NotBlank
     @Column(nullable = false)
-    //@Index(name = "name_index")
     private String name;
 
     @NotBlank
