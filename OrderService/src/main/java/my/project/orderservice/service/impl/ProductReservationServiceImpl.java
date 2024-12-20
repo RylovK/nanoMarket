@@ -1,6 +1,9 @@
 package my.project.orderservice.service.impl;
 
+import io.github.resilience4j.bulkhead.annotation.Bulkhead;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
+import io.github.resilience4j.retry.annotation.Retry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import my.project.orderservice.dto.Cart;
@@ -27,7 +30,16 @@ public class ProductReservationServiceImpl implements ProductReservationService 
     private final CartFeignClient cartFeignClient;
 
     @Override
-    @CircuitBreaker(name = "checkStockAndReserveProducts", fallbackMethod = "fallbackCheckStockAndReserveProducts")
+//    @RateLimiter(name = "checkStockAndReserveProducts",
+//            fallbackMethod = "fallbackCheckStockAndReserveProducts")
+    @Bulkhead(name = "checkStockAndReserveProducts", type = Bulkhead.Type.THREADPOOL,
+            fallbackMethod = "fallbackCheckStockAndReserveProducts")
+    @CircuitBreaker(name = "checkStockAndReserveProducts",
+            fallbackMethod = "fallbackCheckStockAndReserveProducts")
+
+    @Retry(name = "checkStockAndReserveProducts",
+            fallbackMethod="fallbackCheckStockAndReserveProducts")
+
     public Order checkStockAndReserveProducts(OrderRequest orderRequest) {
         Long customerId = orderRequest.getCustomerId();
         log.info("Checking stock and reserve products for customer: {}", customerId);
@@ -67,9 +79,46 @@ public class ProductReservationServiceImpl implements ProductReservationService 
         cartFeignClient.clearCart(customerId);
         return order;
     }
-
+    //TODO: резервная реализация должна предусматривать действия
+    //для выполнения, когда срок ожидания ответа ресурса истек
+    //или он вернул ошибку. Если резервная реализация перехваты-
+    //вает исключение тайм-аута и просто регистрирует ошибки в журна-
+    //ле, то вместо этой стратегии лучше вызывать службу в стандартном
+    //блоке try ... catch;
     public Order fallbackCheckStockAndReserveProducts(OrderRequest orderRequest, Throwable throwable) {
-        log.error("Fallback for checkStockAndReserveProducts due to: {}", throwable.getMessage());
-        return null;
+        log.error("Fallback for checkStockAndReserveProducts. OrderRequest: {}, Error: {}", orderRequest, throwable.getMessage(), throwable);
+        throw new RuntimeException("Fallback for checkStockAndReserveProducts due to: {}", throwable);
     }
+
+    /**
+     *
+     public Order circuitBreakerFallback(OrderRequest orderRequest, Throwable throwable) {
+     log.error("CircuitBreaker triggered for order: {}", orderRequest, throwable);
+     return fallbackOrderLogic(orderRequest);
+     }
+
+     public Order rateLimiterFallback(OrderRequest orderRequest, Throwable throwable) {
+     log.error("RateLimiter triggered for order: {}", orderRequest, throwable);
+     return fallbackOrderLogic(orderRequest);
+     }
+
+     public Order retryFallback(OrderRequest orderRequest, Throwable throwable) {
+     log.error("Retry exhausted for order: {}", orderRequest, throwable);
+     return fallbackOrderLogic(orderRequest);
+     }
+
+     public Order bulkheadFallback(OrderRequest orderRequest, Throwable throwable) {
+     log.error("Bulkhead limit reached for order: {}", orderRequest, throwable);
+     return fallbackOrderLogic(orderRequest);
+     }
+
+     private Order fallbackOrderLogic(OrderRequest orderRequest) {
+     Order fallbackOrder = new Order();
+     fallbackOrder.setCustomerId(orderRequest.getCustomerId());
+     fallbackOrder.setItems(Collections.emptyList());
+     fallbackOrder.setTotal(BigDecimal.ZERO);
+     return fallbackOrder;
+     }
+
+     */
 }

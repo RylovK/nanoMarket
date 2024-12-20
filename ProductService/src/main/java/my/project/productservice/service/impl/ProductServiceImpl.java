@@ -122,6 +122,7 @@ public class ProductServiceImpl implements ProductService {
             productsToReserve.add(product);
         }
         productRepository.saveAll(productsToReserve);
+        log.info("Products was reserved successfully");
     }
 
     @Override
@@ -135,6 +136,7 @@ public class ProductServiceImpl implements ProductService {
         product.getImages().add(productImage);
         productImageRepository.save(productImage);
         productRepository.save(product);
+        log.info("Image for {} uploaded successfully", id);
         return productMapper.toProductDTO(productRepository.save(product));
     }
 }
