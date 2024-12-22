@@ -9,8 +9,8 @@ services:
       dockerfile: Dockerfile
 #    volumes:
 #      - ./ConfigServer/src/main/resources/config:/app/config
-    ports:
-      - "8071:8071"
+#    ports:
+#      - "8071:8071"
     networks:
       - backend
     environment:
@@ -19,12 +19,12 @@ services:
       - SPRING_CLOUD_CONFIG_SERVER_GIT_URI=https://github.com/RylovK/nanomarket-config-repo.git
       - SPRING_CLOUD_CONFIG_SERVER_GIT_USERNAME=RylovK
       - SPRING_CLOUD_CONFIG_SERVER_GIT_PASSWORD=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
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://config-server:8071/actuator/health" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 15s
+#    healthcheck:
+#      test: [ "CMD", "curl", "-f", "http://config-server:8071/actuator/health" ]
+#      interval: 15s
+#      timeout: 10s
+#      retries: 5
+#      start_period: 30s
 
 
   postgres:
@@ -95,11 +95,11 @@ services:
 #      - "6379:6379"
     volumes:
       - ./redis_data:/data
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
+#    healthcheck:
+#      test: ["CMD", "redis-cli", "ping"]
+#      interval: 10s
+#      timeout: 5s
+#      retries: 3
     networks:
       - backend
 
@@ -111,9 +111,9 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8070:8070"
-    depends_on:
-      config-server:
-        condition: service_healthy
+#    depends_on:
+#      config-server:
+#        condition: service_healthy
     networks:
       - backend
     environment:
@@ -133,9 +133,9 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8081:8081"
-    depends_on:
-      eureka:
-        condition: service_healthy
+#    depends_on:
+#      eureka:
+#        condition: service_healthy
     networks:
       - backend
     environment:
@@ -150,9 +150,9 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8082:8082"
-    depends_on:
-      eureka:
-        condition: service_healthy
+#    depends_on:
+#      eureka:
+#        condition: service_healthy
     networks:
       - backend
     environment:
