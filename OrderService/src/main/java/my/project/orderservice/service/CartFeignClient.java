@@ -12,6 +12,6 @@ public interface CartFeignClient {
     @GetMapping("/api/v1/cart/{cartId}")
     Cart getCart(@PathVariable("cartId") Long cartId);
 
-    @DeleteMapping("/{cartId}")
+    @DeleteMapping("/api/v1/cart/{cartId}")
     void clearCart(@PathVariable("cartId") Long cartId);
 }

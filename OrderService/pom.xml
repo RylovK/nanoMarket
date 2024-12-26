@@ -9,7 +9,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>order-service</artifactId>
+    <artifactId>orderEntity-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>OrderService</name>
     <description>OrderService</description>

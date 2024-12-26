@@ -16,6 +16,6 @@ public interface ProductFeignClient {
     @GetMapping("/api/v1/stock/availability/{id}")
     ProductAvailabilityDTO getProductAvailability(@PathVariable("id") Long id);
 
-    @PostMapping
+    @PostMapping("/api/v1/stock/reserve")
     void reserveProducts(List<ProductReservationRequest> products);
 }

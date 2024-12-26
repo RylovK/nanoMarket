@@ -2,7 +2,6 @@ package my.project.orderservice.service.impl;
 
 import io.github.resilience4j.bulkhead.annotation.Bulkhead;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
-import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import io.github.resilience4j.retry.annotation.Retry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,7 +9,7 @@ import my.project.orderservice.dto.Cart;
 import my.project.orderservice.dto.OrderRequest;
 import my.project.orderservice.dto.ProductAvailabilityDTO;
 import my.project.orderservice.dto.ProductReservationRequest;
-import my.project.orderservice.entity.Order;
+import my.project.orderservice.entity.OrderEntity;
 import my.project.orderservice.entity.OrderItem;
 import my.project.orderservice.service.CartFeignClient;
 import my.project.orderservice.service.ProductFeignClient;
@@ -40,11 +39,12 @@ public class ProductReservationServiceImpl implements ProductReservationService 
     @Retry(name = "checkStockAndReserveProducts",
             fallbackMethod="fallbackCheckStockAndReserveProducts")
 
-    public Order checkStockAndReserveProducts(OrderRequest orderRequest) {
+    public OrderEntity checkStockAndReserveProducts(OrderRequest orderRequest) {
         Long customerId = orderRequest.getCustomerId();
         log.info("Checking stock and reserve products for customer: {}", customerId);
-        Order order = new Order();
-        order.setCustomerId(customerId);
+        OrderEntity orderEntity = new OrderEntity();
+        orderEntity.setCustomerId(customerId);
+
 
         List<ProductReservationRequest> reservationRequestList = new ArrayList<>();
 
@@ -63,9 +63,9 @@ public class ProductReservationServiceImpl implements ProductReservationService 
                 item.setProductId(productId);
                 item.setQuantity(quantity);
                 item.setPrice(availability.getPrice());
-                item.setOrder(order);
-                order.getItems().add(item);
-                order.setTotal(order.getTotal().add(availability.getPrice()));
+                item.setOrderEntity(orderEntity);
+                orderEntity.getItems().add(item);
+                orderEntity.setTotal(orderEntity.getTotal().add(availability.getPrice()));
 
                 ProductReservationRequest request = new ProductReservationRequest();
                 request.setProductId(productId);
@@ -75,9 +75,9 @@ public class ProductReservationServiceImpl implements ProductReservationService 
             }
         }
         productFeignClient.reserveProducts(reservationRequestList);
-        log.info("Successfully Reserved products for customer: {}", customerId);
+        log.info("Successfully reserved products for customer: {}", customerId);
         cartFeignClient.clearCart(customerId);
-        return order;
+        return orderEntity;
     }
     //TODO: резервная реализация должна предусматривать действия
     //для выполнения, когда срок ожидания ответа ресурса истек
@@ -85,7 +85,7 @@ public class ProductReservationServiceImpl implements ProductReservationService 
     //вает исключение тайм-аута и просто регистрирует ошибки в журна-
     //ле, то вместо этой стратегии лучше вызывать службу в стандартном
     //блоке try ... catch;
-    public Order fallbackCheckStockAndReserveProducts(OrderRequest orderRequest, Throwable throwable) {
+    public OrderEntity fallbackCheckStockAndReserveProducts(OrderRequest orderRequest, Throwable throwable) {
         log.error("Fallback for checkStockAndReserveProducts. OrderRequest: {}, Error: {}", orderRequest, throwable.getMessage(), throwable);
         throw new RuntimeException("Fallback for checkStockAndReserveProducts due to: {}", throwable);
     }

@@ -15,7 +15,7 @@ import java.util.UUID;
 
 @Entity
 @Getter @Setter
-public class Order {
+public class OrderEntity {
 
     @Id
     @UuidGenerator
@@ -25,13 +25,13 @@ public class Order {
     @Column(nullable = false)
     private Long customerId;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "orderEntity", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> items = new ArrayList<>();
 
     @Column(nullable = false)
     private BigDecimal total = BigDecimal.ZERO;
 
-    @Embedded
+//    @Embedded
     @Enumerated(EnumType.STRING)
     private Status status = Status.CREATED;
 
@@ -42,8 +42,8 @@ public class Order {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    @Embeddable
-    @Getter
+//    @Embeddable
+//    @Getter
     public enum Status {
         CREATED,
         PROCESSING,

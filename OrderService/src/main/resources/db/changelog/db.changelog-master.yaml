@@ -4,7 +4,7 @@ databaseChangeLog:
       author: KRylov (generated)
       changes:
         - createTable:
-            tableName: order
+            tableName: order_entity
             columns:
               - column:
                   name: order_id
@@ -73,5 +73,5 @@ databaseChangeLog:
             baseTableName: order_item
             baseColumnNames: order_id
             constraintName: fk_order_item_order
-            referencedTableName: order
+            referencedTableName: order_entity
             referencedColumnNames: order_id

@@ -1,9 +1,9 @@
 package my.project.orderservice.service;
 
 import my.project.orderservice.dto.OrderRequest;
-import my.project.orderservice.entity.Order;
+import my.project.orderservice.entity.OrderEntity;
 
 public interface ProductReservationService {
 
-    Order checkStockAndReserveProducts(OrderRequest orderRequest);
+    OrderEntity checkStockAndReserveProducts(OrderRequest orderRequest);
 }

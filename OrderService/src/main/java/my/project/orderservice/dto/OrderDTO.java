@@ -2,7 +2,7 @@ package my.project.orderservice.dto;
 
 import lombok.Getter;
 import lombok.Setter;
-import my.project.orderservice.entity.Order;
+import my.project.orderservice.entity.OrderEntity;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -14,7 +14,7 @@ public class OrderDTO {
     private UUID orderId;
     private Long customerId;
     private BigDecimal total;
-    private Order.Status status;
+    private OrderEntity.Status status;
 //    private LocalDateTime createdAt;
 //    private LocalDateTime updatedAt;
     private List<OrderItemDTO> items;

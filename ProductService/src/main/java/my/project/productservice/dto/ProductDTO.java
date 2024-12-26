@@ -10,6 +10,7 @@ import jakarta.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.URL;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Getter @Setter
 public class ProductDTO {
@@ -35,6 +36,5 @@ public class ProductDTO {
 
     private BrandDTO brand;
 
-    @URL(message = "Invalid URL format")
-    private ProductImage image;
+    private List<String> images;
 }

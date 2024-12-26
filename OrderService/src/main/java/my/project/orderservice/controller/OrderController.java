@@ -4,7 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import my.project.orderservice.dto.OrderDTO;
 import my.project.orderservice.dto.OrderRequest;
-import my.project.orderservice.entity.Order;
+import my.project.orderservice.entity.OrderEntity;
 import my.project.orderservice.service.OrderService;
 import my.project.orderservice.service.ProductReservationService;
 import org.springframework.http.ResponseEntity;
@@ -35,14 +35,14 @@ public class OrderController {
 
     @PostMapping
     public ResponseEntity<OrderDTO> createOrder(@RequestBody @Valid OrderRequest orderRequest) {
-        Order order = productReservationService.checkStockAndReserveProducts(orderRequest);
-        OrderDTO dto = orderService.createOrder(order);
+        OrderEntity orderEntity = productReservationService.checkStockAndReserveProducts(orderRequest);
+        OrderDTO dto = orderService.createOrder(orderEntity);
         return ResponseEntity.ok(dto);
     }
 
     @PutMapping("/{orderId}")
     public ResponseEntity<OrderDTO> updateOrder(@PathVariable UUID orderId,
-                                                @RequestBody Order.Status newStatus) {
+                                                @RequestBody OrderEntity.Status newStatus) {
         OrderDTO updated = orderService.updateOrderStatus(orderId, newStatus);
         return ResponseEntity.ok(updated);
     }

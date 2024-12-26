@@ -1,11 +1,10 @@
 package my.project.orderservice.service.impl;
 
-import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import my.project.orderservice.dto.*;
-import my.project.orderservice.entity.Order;
+import my.project.orderservice.entity.OrderEntity;
 import my.project.orderservice.mapper.OrderMapper;
 import my.project.orderservice.repository.OrderRepository;
 import my.project.orderservice.service.OrderService;
@@ -28,9 +27,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public OrderDTO createOrder(Order order) {
-        Order saved = orderRepository.save(order);
-        log.info("Order {} created for customer: {}", saved.getOrderId(), order.getCustomerId());
+    public OrderDTO createOrder(OrderEntity orderEntity) {
+        OrderEntity saved = orderRepository.save(orderEntity);
+        log.info("Order {} created for customer: {}", saved.getOrderId(), saved.getCustomerId());
         return orderMapper.toOrderDTO(saved);
     }
 
@@ -48,21 +47,21 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderDTO updateOrderStatus(UUID orderId, Order.Status newStatus) {
-        Order order = orderRepository.findById(orderId)
+    public OrderDTO updateOrderStatus(UUID orderId, OrderEntity.Status newStatus) {
+        OrderEntity orderEntity = orderRepository.findById(orderId)
                 .orElseThrow(EntityNotFoundException::new);
-        order.setStatus(newStatus);
+        orderEntity.setStatus(newStatus);
         //TODO: add logic for statuses processing(message sending?)
-        return orderMapper.toOrderDTO(orderRepository.save(order));
+        return orderMapper.toOrderDTO(orderRepository.save(orderEntity));
     }
 
     @Override
     public boolean deleteOrder(UUID orderId) {
-        Optional<Order> byId = orderRepository.findById(orderId);
+        Optional<OrderEntity> byId = orderRepository.findById(orderId);
         if (byId.isPresent()) {
-            Order order = byId.get();
-            order.setStatus(Order.Status.DELETED);
-            orderRepository.save(order);
+            OrderEntity orderEntity = byId.get();
+            orderEntity.setStatus(OrderEntity.Status.DELETED);
+            orderRepository.save(orderEntity);
             return true;
         }
         return false;
