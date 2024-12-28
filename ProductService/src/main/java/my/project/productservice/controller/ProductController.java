@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import my.project.productservice.dto.ProductDTO;
 import my.project.productservice.exception.ValidationErrorException;
+import my.project.productservice.service.FileUploadService;
 import my.project.productservice.service.ProductService;
 import my.project.productservice.validator.ProductValidator;
 import org.springframework.data.domain.Page;
@@ -23,6 +24,7 @@ public class ProductController {
 
     private final ProductService productService;
     private final ProductValidator productValidator;
+    private final FileUploadService fileUploadService;
 
     @GetMapping
     public ResponseEntity<Page<ProductDTO>> getProducts(@RequestParam Map<String, String> filters,
@@ -74,7 +76,8 @@ public class ProductController {
     @PostMapping("/{id}")
     public ResponseEntity<ProductDTO> uploadProductImage(@PathVariable Long id,
                                                          @RequestBody MultipartFile file) {
-        ProductDTO updated = productService.uploadImage(id, file);
+        String urlToFile = fileUploadService.uploadFile(file, "product-image");
+        ProductDTO updated = productService.uploadImage(id, urlToFile);
         return ResponseEntity.ok(updated);
     }
 

@@ -77,10 +77,13 @@ services:
 
     ports:
       - "9000:9000"
+      - "9001:9001"
+
 
     volumes:
       - ./minio_data:/data
-    command: server /data
+#    command: server /data
+    command: server /minio-image/storage --console-address :9001
     restart: unless-stopped
     networks:
       - backend

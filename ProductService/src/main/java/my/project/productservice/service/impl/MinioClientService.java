@@ -1,81 +1,71 @@
 package my.project.productservice.service.impl;
 
+import io.minio.*;
+import io.minio.errors.*;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import my.project.productservice.service.FileUploadService;
 import org.springframework.beans.factory.annotation.Value;
-
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
-import software.amazon.awssdk.core.sync.RequestBody;
-import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.*;
-
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.UUID;
+
 @Service
 @Slf4j
 public class MinioClientService implements FileUploadService {
 
-    private final String endpoint;
-    private final S3Client s3Client;
+    @Value("${minio.MINIO_ROOT_USER}")
+    private String accessKey;
 
-    public MinioClientService(
-            @Value("${minio.access-key}") String accessKey,
-            @Value("${minio.secret-key}") String secretKey,
-            @Value("${minio.endpoint}") String endpoint,
-            @Value("${minio.region}") String region) {
-        this.endpoint = endpoint;
-        this.s3Client = S3Client.builder()
-                .endpointOverride(URI.create(endpoint))
-                .credentialsProvider(() -> AwsBasicCredentials.create(accessKey, secretKey))
-                .region(Region.of(region))
-                .build();
+    @Value("${minio.MINIO_ROOT_PASSWORD}")
+    private String secretKey;
+
+    @Value("${minio.endpoint}")
+    private String endpoint;
+
+//    @Value("${minio.region}")
+//    private String region;
+
+    private MinioClient minioClient;
+
+    @PostConstruct
+    public void init() {
+        minioClient =
+                MinioClient.builder()
+                        .endpoint(endpoint)
+                        .credentials(accessKey, secretKey)
+                        .build();
     }
 
     @Override
     public String uploadFile(MultipartFile file, String bucketName) {
-        createBucketIfNotExists(bucketName);
-        String uniqueFileName = UUID.randomUUID() + "-" + file.getOriginalFilename();
-
-        try (InputStream inputStream = file.getInputStream()) {
-            PutObjectRequest request = PutObjectRequest.builder()
-                    .bucket(bucketName)
-                    .key(uniqueFileName)
-                    .build();
-
-            s3Client.putObject(request, RequestBody.fromInputStream(inputStream, file.getSize()));
-            log.info("File {} uploaded successfully to bucket {}", file.getOriginalFilename(), bucketName);
-            return new URI(endpoint + "/" + bucketName + "/" + uniqueFileName).toString();
-        } catch (IOException | URISyntaxException e) {
-            throw new RuntimeException("Failed to upload file", e);
-        }
-    }
-
-    private void createBucketIfNotExists(String bucketName) {
         try {
-            HeadBucketRequest headBucketRequest = HeadBucketRequest.builder()
-                    .bucket(bucketName)
-                    .build();
+            boolean found =
+                    minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build());
+            if (!found) {
+                minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucketName).build());
+            } else {
+                System.out.println("Bucket 'asiatrip' already exists.");
+            }
+            String uniqueFileName = UUID.randomUUID() + "-" + file.getOriginalFilename();
 
-            s3Client.headBucket(headBucketRequest);
-            log.info("Bucket {} exists", bucketName);
-        } catch (NoSuchBucketException e) {
-            log.info("Bucket {} does not exist. Creating it now.", bucketName);
-            CreateBucketRequest createBucketRequest = CreateBucketRequest.builder()
-                    .bucket(bucketName)
-                    .build();
-
-            s3Client.createBucket(createBucketRequest);
-            log.info("Bucket {} created successfully", bucketName);
-        } catch (S3Exception e) {
-            log.error("Error interacting with S3: {}", e.awsErrorDetails().errorMessage());
-            throw new RuntimeException("Error interacting with S3", e);
+            ObjectWriteResponse objectWriteResponse = minioClient.putObject(
+                    PutObjectArgs.builder()
+                            .bucket(bucketName)
+                            .object(uniqueFileName)
+                            .contentType(file.getContentType())
+                            .stream(file.getInputStream(), file.getSize(), -1)
+                            .build());
+            String urlToFile = objectWriteResponse.bucket() + "/" + objectWriteResponse.object();
+            log.info("File uploaded to Minio: {}", urlToFile);
+            return urlToFile;
+        } catch (IOException | NoSuchAlgorithmException | InvalidKeyException | ServerException | InsufficientDataException | ErrorResponseException | InvalidResponseException | XmlParserException | InternalException exception) {
+            log.error("Error occurred during file upload", exception);
+            throw new RuntimeException("Failed to upload file", exception);
         }
     }
 }

@@ -127,11 +127,10 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
-    public ProductDTO uploadImage(Long id, MultipartFile file) {
+    public ProductDTO uploadImage(Long id, String pathToImage) {
         Product product = productRepository.findById(id).orElseThrow(ProductNotFoundException::new);
-        String url = fileUploadService.uploadFile(file, this.getClass().getSimpleName());
         ProductImage productImage = new ProductImage();
-        productImage.setImageUrl(url);
+        productImage.setImageUrl(pathToImage);
         productImage.setProduct(product);
         product.getImages().add(productImage);
         productImageRepository.save(productImage);

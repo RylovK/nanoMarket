@@ -89,5 +89,5 @@ public interface ProductService {
 
 
 
-    ProductDTO uploadImage(Long id, MultipartFile file);
+    ProductDTO uploadImage(Long id, String pathToImage);
 }
