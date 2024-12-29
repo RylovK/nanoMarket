@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import my.project.productservice.dto.BrandDTO;
 import my.project.productservice.exception.ValidationErrorException;
 import my.project.productservice.service.BrandService;
+import my.project.productservice.service.FileUploadService;
 import my.project.productservice.validator.BrandValidator;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,6 +23,7 @@ public class BrandController {
 
     private final BrandService brandService;
     private final BrandValidator brandValidator;
+    private final FileUploadService fileUploadService;
 
     @GetMapping
     public ResponseEntity<Page<BrandDTO>> getAllBrands(@RequestParam(required = false) String brandName,
@@ -52,7 +54,9 @@ public class BrandController {
     @PostMapping("/{id}")
     public ResponseEntity<BrandDTO> uploadBrandImage(@PathVariable Long id,
                                                      @RequestParam("file") MultipartFile file) {
-        return null; //TODO
+        String url = fileUploadService.uploadFile(file, "brand-images");
+        BrandDTO updated = brandService.uploadImage(id, url);
+        return ResponseEntity.ok(updated);
     }
 
     @PutMapping("/{id}")

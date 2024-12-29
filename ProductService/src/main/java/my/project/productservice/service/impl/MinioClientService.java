@@ -48,8 +48,7 @@ public class MinioClientService implements FileUploadService {
                     minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build());
             if (!found) {
                 minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucketName).build());
-            } else {
-                System.out.println("Bucket 'asiatrip' already exists.");
+                log.info("Bucket {} created", bucketName);
             }
             String uniqueFileName = UUID.randomUUID() + "-" + file.getOriginalFilename();
 
@@ -60,7 +59,7 @@ public class MinioClientService implements FileUploadService {
                             .contentType(file.getContentType())
                             .stream(file.getInputStream(), file.getSize(), -1)
                             .build());
-            String urlToFile = objectWriteResponse.bucket() + "/" + objectWriteResponse.object();
+            String urlToFile = endpoint + "/" + objectWriteResponse.bucket() + "/" + objectWriteResponse.object();
             log.info("File uploaded to Minio: {}", urlToFile);
             return urlToFile;
         } catch (IOException | NoSuchAlgorithmException | InvalidKeyException | ServerException | InsufficientDataException | ErrorResponseException | InvalidResponseException | XmlParserException | InternalException exception) {

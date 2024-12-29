@@ -127,15 +127,15 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
-    public ProductDTO uploadImage(Long id, String pathToImage) {
+    public ProductDTO uploadImage(Long id, String urlToImage) {
         Product product = productRepository.findById(id).orElseThrow(ProductNotFoundException::new);
         ProductImage productImage = new ProductImage();
-        productImage.setImageUrl(pathToImage);
+        productImage.setImageUrl(urlToImage);
         productImage.setProduct(product);
         product.getImages().add(productImage);
         productImageRepository.save(productImage);
-        productRepository.save(product);
-        log.info("Image for {} uploaded successfully", id);
-        return productMapper.toProductDTO(productRepository.save(product));
+        Product saved = productRepository.save(product);
+        log.info("Image for {} uploaded successfully", product.getName());
+        return productMapper.toProductDTO(saved);
     }
 }

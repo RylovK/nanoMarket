@@ -76,8 +76,8 @@ public class ProductController {
     @PostMapping("/{id}")
     public ResponseEntity<ProductDTO> uploadProductImage(@PathVariable Long id,
                                                          @RequestBody MultipartFile file) {
-        String urlToFile = fileUploadService.uploadFile(file, "product-image");
-        ProductDTO updated = productService.uploadImage(id, urlToFile);
+        String url = fileUploadService.uploadFile(file, "product-images");
+        ProductDTO updated = productService.uploadImage(id, url);
         return ResponseEntity.ok(updated);
     }
 

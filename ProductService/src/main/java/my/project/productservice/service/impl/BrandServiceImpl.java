@@ -75,4 +75,14 @@ public class BrandServiceImpl implements BrandService {
         }
         return false;
     }
+
+    @Transactional
+    @Override
+    public BrandDTO uploadImage(Long id, String urlToImage) {
+        Brand brand = brandRepository.findById(id).orElseThrow(BrandNotFoundException::new);
+        brand.setLogoUrl(urlToImage);
+        Brand saved = brandRepository.save(brand);
+        log.info("Image for brand {} uploaded", saved.getBrandName());
+        return brandMapper.toDto(saved);
+    }
 }

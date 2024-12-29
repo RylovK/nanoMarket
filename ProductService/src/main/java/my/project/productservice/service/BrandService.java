@@ -1,6 +1,7 @@
 package my.project.productservice.service;
 
 import my.project.productservice.dto.BrandDTO;
+import my.project.productservice.dto.ProductDTO;
 import my.project.productservice.exception.BrandNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -53,4 +54,11 @@ public interface BrandService {
      * @return true if the brand was successfully deleted, false if no brand with the given ID was found
      */
     boolean deleteBrand(long id);
+
+    /**
+     * @param id the unique identifier of the brand
+     * @param urlToImage is URL to uploaded image
+     * @return a {@link BrandDTO} representing the updated brand
+     */
+    BrandDTO uploadImage(Long id, String urlToImage);
 }

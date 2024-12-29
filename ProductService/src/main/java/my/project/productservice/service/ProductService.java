@@ -21,7 +21,7 @@ public interface ProductService {
 
     /**
      * Retrieves a paginated list of products based on provided filters and pagination parameters.
-     *
+     * <p>
      * Filters can be applied to the following product fields:
      * <ul>
      *     <li><b>Product name</b> - filter products by their name or description.</li>
@@ -88,6 +88,10 @@ public interface ProductService {
     void reserveProducts(@Valid List<ProductReservationRequest> reservationRequests);
 
 
-
-    ProductDTO uploadImage(Long id, String pathToImage);
+    /**
+     * @param id the unique identifier of the product
+     * @param urlToImage is URL to uploaded image
+     * @return a {@link ProductDTO} representing the updated product
+     */
+    ProductDTO uploadImage(Long id, String urlToImage);
 }
