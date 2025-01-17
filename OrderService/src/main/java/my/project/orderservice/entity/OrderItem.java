@@ -22,12 +22,12 @@ public class OrderItem {
     private Long productId;
 
     @Column(nullable = false)
-    private BigDecimal price;
+    private Integer quantity;
 
     @Column(nullable = false)
-    private Integer quantity;
+    private BigDecimal price;
 
     @ManyToOne
     @JoinColumn(name = "order_id", nullable = false)
-    private OrderEntity orderEntity;
+    private OrderEntity order;
 }

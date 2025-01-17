@@ -23,27 +23,27 @@ public class OrderController {
 
     @GetMapping("/{orderId}")
     public ResponseEntity<OrderDTO> getOrder(@PathVariable UUID orderId) {
-        OrderDTO founded = orderService.getOrderById(orderId);
+        var founded = orderService.getOrderById(orderId);
         return ResponseEntity.ok(founded);
     }
 
     @GetMapping("/user/{customerId}")
     public ResponseEntity<List<OrderDTO>> getOrdersByCustomerId(@PathVariable Long customerId) {
-        List<OrderDTO> ordersList = orderService.getOrdersByCustomerId(customerId);
+        var ordersList = orderService.getOrdersByCustomerId(customerId);
         return ResponseEntity.ok(ordersList);
     }
 
     @PostMapping
     public ResponseEntity<OrderDTO> createOrder(@RequestBody @Valid OrderRequest orderRequest) {
-        OrderEntity orderEntity = productReservationService.checkStockAndReserveProducts(orderRequest);
-        OrderDTO dto = orderService.createOrder(orderEntity);
+        var orderEntity = productReservationService.checkStockAndReserveProducts(orderRequest);
+        var dto = orderService.createOrder(orderEntity);
         return ResponseEntity.ok(dto);
     }
 
     @PutMapping("/{orderId}")
     public ResponseEntity<OrderDTO> updateOrder(@PathVariable UUID orderId,
                                                 @RequestBody OrderEntity.Status newStatus) {
-        OrderDTO updated = orderService.updateOrderStatus(orderId, newStatus);
+        var updated = orderService.updateOrderStatus(orderId, newStatus);
         return ResponseEntity.ok(updated);
     }
 

@@ -28,4 +28,11 @@ public class Cart implements Serializable {
     private Map<Long, @Min(1) Integer> items = new HashMap<>();
 
     private LocalDateTime lastUpdated = LocalDateTime.now();
+
+    @Override
+    public String toString() {
+        return "Cart{" +
+                "id=" + id +
+                '}';
+    }
 }
