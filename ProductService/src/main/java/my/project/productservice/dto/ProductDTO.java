@@ -1,12 +1,9 @@
 package my.project.productservice.dto;
 
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
 import my.project.productservice.entity.ProductImage;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.URL;
 
 import java.math.BigDecimal;
@@ -29,7 +26,7 @@ public class ProductDTO {
     private BigDecimal price;
 
     @NotNull(message = "Quantity cannot be null")
-    @Min(value = 0, message = "Quantity must be 0 or more")
+    @Positive(message = "Quantity must be 0 or more")
     private Integer quantity;
 
     private CategoryDTO category;

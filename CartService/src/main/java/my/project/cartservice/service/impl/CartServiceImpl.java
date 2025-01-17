@@ -36,8 +36,8 @@ public class CartServiceImpl implements CartService {
             log.error("Product not found");
             throw new IllegalArgumentException("Product not found: " + request.getProductId());
         }
-        if (request.getQuantity() > product.getQuantity()) {
-            log.warn("Quantity is greater than product quantity");
+        if (request.getQuantity() > product.quantity()) {
+            log.warn("Quantity is greater than product stock");
             throw new IllegalArgumentException("Not enough stock for product: " + request.getProductId());
         }
 

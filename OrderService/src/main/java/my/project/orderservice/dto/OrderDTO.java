@@ -15,7 +15,5 @@ public class OrderDTO {
     private Long customerId;
     private BigDecimal total;
     private OrderEntity.Status status;
-//    private LocalDateTime createdAt;
-//    private LocalDateTime updatedAt;
     private List<OrderItemDTO> items;
 }

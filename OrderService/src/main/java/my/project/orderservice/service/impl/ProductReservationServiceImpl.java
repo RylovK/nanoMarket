@@ -16,6 +16,7 @@ import my.project.orderservice.service.ProductFeignClient;
 import my.project.orderservice.service.ProductReservationService;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -40,7 +41,7 @@ public class ProductReservationServiceImpl implements ProductReservationService 
             fallbackMethod="fallbackCheckStockAndReserveProducts")
 
     public OrderEntity checkStockAndReserveProducts(OrderRequest orderRequest) {
-        Long customerId = orderRequest.getCustomerId();
+        Long customerId = orderRequest.customerId();
         log.info("Checking stock and reserve products for customer: {}", customerId);
         OrderEntity orderEntity = new OrderEntity();
         orderEntity.setCustomerId(customerId);
@@ -55,17 +56,18 @@ public class ProductReservationServiceImpl implements ProductReservationService 
             Integer quantity = entry.getValue();
             log.debug("Getting availability for productId: {}", productId);
             ProductAvailabilityDTO availability = productFeignClient.getProductAvailability(productId);
-            if (availability.getQuantity() < quantity) {
+            if (availability.quantity() < quantity) {
                 log.warn("Not enough stock for product {} in order {}", productId, customerId);
                 throw new IllegalArgumentException("Not enough stock");
             } else {
                 OrderItem item = new OrderItem();
                 item.setProductId(productId);
                 item.setQuantity(quantity);
-                item.setPrice(availability.getPrice());
+                item.setPrice(availability.price());
                 item.setOrderEntity(orderEntity);
                 orderEntity.getItems().add(item);
-                orderEntity.setTotal(orderEntity.getTotal().add(availability.getPrice()));
+
+                orderEntity.setTotal(orderEntity.getTotal().add(calculateTotal(availability)));
 
                 ProductReservationRequest request = new ProductReservationRequest();
                 request.setProductId(productId);
@@ -79,6 +81,14 @@ public class ProductReservationServiceImpl implements ProductReservationService 
         cartFeignClient.clearCart(customerId);
         return orderEntity;
     }
+
+    private BigDecimal calculateTotal(ProductAvailabilityDTO availability) {
+        BigDecimal price = availability.price();
+        Integer quantity = availability.quantity();
+        return price.multiply(BigDecimal.valueOf(quantity));
+    }
+
+
     //TODO: резервная реализация должна предусматривать действия
     //для выполнения, когда срок ожидания ответа ресурса истек
     //или он вернул ошибку. Если резервная реализация перехваты-

@@ -1,6 +1,7 @@
 package my.project.productservice.controller;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import my.project.productservice.dto.BrandDTO;
 import my.project.productservice.exception.ValidationErrorException;
@@ -13,12 +14,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@RequestMapping("/api/v1/brand")
+@RequestMapping("/api/v1/brands")
 @RequiredArgsConstructor
+@Validated
 public class BrandController {
 
     private final BrandService brandService;
@@ -35,7 +38,7 @@ public class BrandController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<BrandDTO> getBrand(@PathVariable Long id) {
+    public ResponseEntity<BrandDTO> getBrand(@PathVariable @Min(1) Long id) {
         BrandDTO brandById = brandService.getBrandById(id);
         return ResponseEntity.ok(brandById);
     }

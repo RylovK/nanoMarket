@@ -1,5 +1,6 @@
 package my.project.productservice.mapper;
 
+import jakarta.validation.constraints.NotNull;
 import my.project.productservice.dto.ProductAvailabilityDTO;
 import my.project.productservice.dto.ProductDTO;
 import my.project.productservice.entity.Product;
@@ -8,6 +9,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,6 +33,7 @@ public interface ProductMapper {
     }
 
     default List<ProductImage> toProductImages(List<String> urls) {
+        if (urls == null || urls.isEmpty()) return Collections.emptyList();
         return urls.stream()
                 .map(url -> {
                     ProductImage productImage = new ProductImage();
