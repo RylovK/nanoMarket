@@ -19,6 +19,6 @@ public interface OrderMapper {
     @Mapping(target = "items", source = "items")
     OrderEntity toOrderEntity(OrderDTO orderDTO);
 
-    @Mapping(target = "orderEntity", ignore = true)
+    @Mapping(target = "order", ignore = true)
     OrderItem toOrderItemEntity(OrderItemDTO orderItemDTO);
 }

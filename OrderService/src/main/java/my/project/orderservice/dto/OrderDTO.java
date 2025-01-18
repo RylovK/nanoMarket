@@ -8,6 +8,11 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Data transfer object (DTO) representing an order.
+ * Contains details about the order, including customer information, total amount,
+ * order status, and the list of order items.
+ */
 @Getter @Setter
 public class OrderDTO {
 
