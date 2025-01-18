@@ -81,13 +81,22 @@ public class ProductReservationServiceImpl implements ProductReservationService 
     }
 
 
+    /**
+     * Retrieves the cart for the specified customer and validates that it is not empty.
+     *
+     * @param customerId the ID of the customer whose cart needs to be validated
+     * @return a {@link Cart} containing the items for the specified customer
+     * @throws IllegalStateException if the cart is empty or not found
+     */
     private Cart validateAndGetCart(Long customerId) {
-        log.debug("Getting cart for customer: {}", customerId);
+        log.debug("Retrieving cart for customer with ID: {}", customerId);
         Cart cart = cartFeignClient.getCart(customerId);
         if (cart.getItems().isEmpty()) {
+            log.warn("Cart is empty or not found for customer with ID: {}", customerId);
             //TODO: need to create exception
-            throw new RuntimeException("No cart items found for customer: " + customerId);
+            throw new IllegalStateException("No cart items found for customer: " + customerId);
         }
+        log.debug("Cart retrieved successfully for customer with ID: {}", customerId);
         return cart;
     }
 
