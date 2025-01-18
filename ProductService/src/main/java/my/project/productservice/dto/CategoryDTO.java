@@ -10,7 +10,13 @@ import lombok.Setter;
 import java.util.HashSet;
 import java.util.Set;
 
-@Getter @Setter
+/**
+ * Data transfer object (DTO) representing a product category.
+ * Contains information about the category's name, description, parent category,
+ * and subcategories.
+ */
+@Getter
+@Setter
 public class CategoryDTO {
 
     private Long id;
@@ -23,9 +29,17 @@ public class CategoryDTO {
     @Size(min = 10, max = 255, message = "Category description must be between 10 and 255 symbols")
     private String description;
 
+    /**
+     * The unique identifier of the parent category.
+     * If the category has no parent, this field may be {@code null}.
+     */
     private Long parentId;
 
+    /**
+     * A set of subcategories under this category.
+     * This field contains child categories related to this category.
+     */
     private Set<CategoryDTO> subcategories = new HashSet<>();
 
-    //private Set<ProductDTO> products = new HashSet<>(); TODO: нужен ли список продуктов?
+    //private Set<ProductDTO> products = new HashSet<>(); TODO: Should the list of products be included?
 }

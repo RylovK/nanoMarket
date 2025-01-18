@@ -10,6 +10,10 @@ import org.hibernate.validator.constraints.URL;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Data transfer object (DTO) representing a product brand.
+ * Contains information about the brand's name and logo URL.
+ */
 @Getter @Setter
 public class BrandDTO {
 

@@ -8,7 +8,11 @@ import org.hibernate.validator.constraints.URL;
 
 import java.math.BigDecimal;
 import java.util.List;
-
+/**
+ * Data transfer object (DTO) representing a product.
+ * Contains details such as the product's name, description, price, quantity,
+ * associated category, brand, and images.
+ */
 @Getter @Setter
 public class ProductDTO {
 
