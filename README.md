@@ -18,7 +18,7 @@ The project utilizes the following technologies and tools:
 - **Containerization**: Docker, Docker Compose.
 - **Monitoring and Resilience**: Actuator, Resilience4j.
 - **Data Storage**: PostgreSQL, Redis, MinIO.
-- **Development Utilities**: AOP, Lombok, MapStruct, Liquibase, Swagger.
+- **Development Utilities**: AOP, Lombok, MapStruct, Liquibase, Swagger, OpenAPI 3.0.
 
 
 
