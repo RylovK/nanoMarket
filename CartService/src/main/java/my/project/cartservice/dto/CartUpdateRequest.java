@@ -4,7 +4,10 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
-
+/**
+ * Data transfer object (DTO) representing a request to update a shopping cart.
+ * Contains the cart ID, product ID, and the quantity to be updated.
+ */
 @Getter @Setter
 public class CartUpdateRequest {
 
