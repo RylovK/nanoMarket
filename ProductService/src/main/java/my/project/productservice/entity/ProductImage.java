@@ -5,11 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity @Getter @Setter
-public class ProductImage {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class ProductImage extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "product_id")

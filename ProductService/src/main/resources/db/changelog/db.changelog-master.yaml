@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: 1
+      id: create-brand-table
       author: Krylov
       changes:
         - createTable:
@@ -30,6 +30,11 @@ databaseChangeLog:
               - column:
                   name: updated_at
                   type: timestamp
+
+  - changeSet:
+      id: create-category-table
+      author: Krylov
+      changes:
         - createTable:
             tableName: category
             columns:
@@ -72,11 +77,9 @@ databaseChangeLog:
             constraintName: fk_category_parent
             deferrable: false
             initiallyDeferred: false
-#            SELECT * FROM category c
-#            LEFT JOIN category parent ON c.parent_id = parent.id
-#            WHERE c.parent_id IS NULL;
+
   - changeSet:
-      id: 2
+      id: create-product-table
       author: KRylov (generated)
       changes:
         - createTable:
@@ -137,7 +140,7 @@ databaseChangeLog:
             onDelete: RESTRICT
 
   - changeSet:
-      id: 3
+      id: create-product-image-table
       author: KRylov (generated)
       changes:
         - createTable:

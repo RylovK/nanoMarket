@@ -5,22 +5,14 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.stereotype.Indexed;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Getter @Setter
-public class Product {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Product extends BaseEntity {
 
     @NotBlank
     @Column(nullable = false)
@@ -47,13 +39,6 @@ public class Product {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductImage> images = new ArrayList<>();
 
-    @Column(updatable = false)
-    @CreationTimestamp
-    private LocalDateTime createdAt;
-
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
-
     public void addImage(ProductImage image) {
         this.images.add(image);
         image.setProduct(this);
@@ -68,11 +53,11 @@ public class Product {
         if (this == o) return true;
         if (!(o instanceof Product product)) return false;
 
-        return getId() == product.getId();
+        return getId().equals(product.getId());
     }
 
     @Override
     public int hashCode() {
-        return Long.hashCode(getId());
+        return getId().hashCode();
     }
 }

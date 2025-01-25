@@ -2,7 +2,9 @@ package my.project.productservice.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.tags.Tag;
+
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
@@ -59,12 +61,14 @@ public class BrandController {
 
     @PostMapping
     @Operation(summary = "Create a new brand",
-            description = "Create a new brand with the provided information")
-    public ResponseEntity<BrandDTO> createBrand(
-            @RequestBody @Valid
-            @Parameter(description = "Brand details to create", required = true) BrandDTO brand,
-
-            BindingResult bindingResult) {
+            description = "Create a new brand with the provided information",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Brand details to create",
+                    required = true,
+                    content = @Content(mediaType = "application/json")
+            ))
+    public ResponseEntity<BrandDTO> createBrand(@RequestBody @Valid BrandDTO brand,
+                                                BindingResult bindingResult) {
         brandValidator.validate(brand, bindingResult);
         if (bindingResult.hasErrors()) {
             throw new ValidationErrorException(bindingResult);
@@ -88,14 +92,15 @@ public class BrandController {
 
     @PutMapping("/{id}")
     @Operation(summary = "Update an existing brand",
-            description = "Update the details of an existing brand")
-    public ResponseEntity<BrandDTO> updateBrand(
-            @PathVariable Long id,
-
-            @RequestBody @Valid
-            @Parameter(description = "Updated brand details", required = true) BrandDTO brand,
-
-            BindingResult bindingResult) {
+            description = "Update the details of an existing brand",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Updated brand details",
+                    required = true,
+                    content = @Content(mediaType = "application/json")
+            ))
+    public ResponseEntity<BrandDTO> updateBrand(@PathVariable Long id,
+                                                @RequestBody @Valid BrandDTO brand,
+                                                BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
             throw new ValidationErrorException(bindingResult);
@@ -109,7 +114,7 @@ public class BrandController {
             description = "Delete the brand with the specified ID")
     public ResponseEntity<BrandDTO> deleteBrand(@PathVariable Long id) {
         if (brandService.deleteBrand(id)) {
-            return ResponseEntity.ok().build();
+            return ResponseEntity.noContent().build();
         }
         return ResponseEntity.notFound().build();
     }

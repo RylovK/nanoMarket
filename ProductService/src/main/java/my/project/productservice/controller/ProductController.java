@@ -1,5 +1,9 @@
 package my.project.productservice.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import my.project.productservice.dto.ProductDTO;
@@ -16,10 +20,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Map;
-
 @RestController
 @RequestMapping("/api/v1/products")
 @RequiredArgsConstructor
+@Tag(name = "Product API", description = "API for product management")
 public class ProductController {
 
     private final ProductService productService;
@@ -27,25 +31,46 @@ public class ProductController {
     private final FileUploadService fileUploadService;
 
     @GetMapping
-    public ResponseEntity<Page<ProductDTO>> getProducts(@RequestParam Map<String, String> filters,
-                                                       @RequestParam(defaultValue = "0") Integer page,
-                                                       @RequestParam(defaultValue = "25") Integer size) {
+    @Operation(summary = "Get all products with filters and pagination",
+            description = "Retrieve a paginated list of products with optional filters")
+    public ResponseEntity<Page<ProductDTO>> getProducts(
+            @RequestParam
+            @Parameter(description = """
+                Map of filters to apply. Available keys:
+                - **name**: Filter by product name (partial match, case insensitive).
+                - **categoryId**: Filter by category ID (exact match).
+                - **brandId**: Filter by brand ID (exact match).
+                Example: ?filters[name]=phone&filters[categoryId]=1
+                """) Map<String, String> filters,
+            @RequestParam(defaultValue = "0")
+            @Parameter(description = "Page number", example = "0") Integer page,
+            @RequestParam(defaultValue = "25")
+            @Parameter(description = "Page size", example = "25") Integer size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<ProductDTO> allProducts = productService.getAllProducts(filters, pageable);
         return ResponseEntity.ok(allProducts);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProductDTO> getProduct(@PathVariable Long id) {
+    @Operation(summary = "Get a product by ID",
+            description = "Retrieve details of a product by its unique ID")
+    public ResponseEntity<ProductDTO> getProduct(
+            @PathVariable
+            @Parameter(description = "ID of the product to retrieve", required = true) Long id) {
         ProductDTO productDTO = productService.getProductById(id);
         return ResponseEntity.ok(productDTO);
     }
 
-
-
     @PostMapping
+    @Operation(summary = "Create a new product",
+            description = "Create a new product with the provided details",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Product details to create",
+                    required = true,
+                    content = @Content(mediaType = "application/json")
+            ))
     public ResponseEntity<ProductDTO> createProduct(@RequestBody @Valid ProductDTO productDTO,
-                                                    BindingResult bindingResult) {
+            BindingResult bindingResult) {
         productValidator.validate(productDTO, bindingResult);
         if (bindingResult.hasErrors()) {
             throw new ValidationErrorException(bindingResult);
@@ -55,9 +80,19 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ProductDTO> updateProduct(@PathVariable Long id,
-                                                    @RequestBody @Valid ProductDTO productDTO,
-                                                    BindingResult bindingResult) {
+    @Operation(summary = "Update an existing product",
+            description = "Update the details of an existing product",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Updated product details",
+                    required = true,
+                    content = @Content(mediaType = "application/json")
+            ))
+    public ResponseEntity<ProductDTO> updateProduct(
+            @PathVariable
+            @Parameter(description = "ID of the product to update", required = true) Long id,
+
+            @RequestBody @Valid ProductDTO productDTO,
+            BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             throw new ValidationErrorException(bindingResult);
         }
@@ -66,19 +101,30 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Delete a product by ID",
+            description = "Delete the product with the specified ID")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
         if (productService.deleteProduct(id)) {
-            return ResponseEntity.ok().build();
+            return ResponseEntity.noContent().build();
         }
         return ResponseEntity.notFound().build();
     }
 
     @PostMapping("/{id}")
-    public ResponseEntity<ProductDTO> uploadProductImage(@PathVariable Long id,
-                                                         @RequestBody MultipartFile file) {
+    @Operation(summary = "Upload an image for a product",
+            description = "Upload a product image and associate it with the given product ID",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Image file to upload",
+                    required = true,
+                    content = @Content(mediaType = "multipart/form-data")
+            ))
+    public ResponseEntity<ProductDTO> uploadProductImage(
+            @PathVariable
+            @Parameter(description = "ID of the product to associate the image with", required = true) Long id,
+
+            @RequestBody MultipartFile file) {
         String url = fileUploadService.uploadFile(file, "product-images");
         ProductDTO updated = productService.uploadImage(id, url);
         return ResponseEntity.ok(updated);
     }
-
 }
