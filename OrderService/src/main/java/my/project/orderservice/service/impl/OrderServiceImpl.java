@@ -57,13 +57,12 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public boolean deleteOrder(UUID orderId) {
-        Optional<OrderEntity> byId = orderRepository.findById(orderId);
-        if (byId.isPresent()) {
-            OrderEntity orderEntity = byId.get();
-            orderEntity.setStatus(OrderEntity.Status.DELETED);
-            orderRepository.save(orderEntity);
-            return true;
-        }
-        return false;
+        return orderRepository.findById(orderId)
+                .map(orderEntity -> {
+                    orderEntity.setStatus(OrderEntity.Status.DELETED);
+                    orderRepository.save(orderEntity);
+                    return true;
+                })
+                .orElse(false);
     }
 }

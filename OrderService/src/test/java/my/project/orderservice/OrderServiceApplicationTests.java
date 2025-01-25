@@ -1,10 +1,9 @@
 package my.project.orderservice;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 
 //@SpringBootTest
-class OrderEntityServiceApplicationTests {
+class OrderServiceApplicationTests {
 
     @Test
     void contextLoads() {
