@@ -1,4 +1,4 @@
-package my.project.productservice.config;
+package my.project.cartservice.config;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
@@ -17,10 +17,10 @@ public class WebConfig implements WebMvcConfigurer {
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("Product service API")
+                        .title("Cart service API")
                         .version("1.0.0")
-                        .description("Documentation for Product service API. " +
-                                "Product service is a part of NanoMarket - online shop project"));
+                        .description("Documentation for Cart service API. " +
+                                "Cart service is a part of NanoMarket - online shop project"));
     }
 
 }

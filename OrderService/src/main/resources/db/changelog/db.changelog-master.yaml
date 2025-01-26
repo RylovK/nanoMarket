@@ -82,4 +82,4 @@ databaseChangeLog:
             baseColumnNames: order_id
             constraintName: fk_order_item_order
             referencedTableName: order_entity
-            referencedColumnNames: order_id
+            referencedColumnNames: id

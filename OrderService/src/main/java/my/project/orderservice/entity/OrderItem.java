@@ -21,4 +21,8 @@ public class OrderItem extends BaseEntity {
 
     @Column(nullable = false)
     private BigDecimal price;
+
+    @ManyToOne
+    @JoinColumn(name = "order_id")
+    private OrderEntity order;
 }
