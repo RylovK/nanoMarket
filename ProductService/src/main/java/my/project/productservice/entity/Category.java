@@ -26,9 +26,6 @@ public class Category extends BaseEntity {
     @OneToMany(mappedBy = "parent")
     private Set<Category> subcategories = new HashSet<>();
 
-    @OneToMany(mappedBy = "category")
-    private Set<Product> products = new HashSet<>();
-
     @Override
     public final boolean equals(Object o) {
         if (this == o) return true;

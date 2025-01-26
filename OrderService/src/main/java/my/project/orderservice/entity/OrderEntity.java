@@ -8,19 +8,13 @@ import lombok.Setter;
 import org.hibernate.annotations.*;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Entity
 @Getter @Setter @NoArgsConstructor
 @SQLRestriction("status <> 'DELETED'")
-public class OrderEntity {
-    @Id
-    @UuidGenerator
-    @Column(updatable = false, nullable = false)
-    private UUID orderId;
+public class OrderEntity extends BaseEntity {
 
     @Column(nullable = false)
     private Long customerId;
@@ -33,13 +27,6 @@ public class OrderEntity {
 
     @Enumerated(EnumType.STRING)
     private Status status = Status.CREATED;
-
-    @Column(updatable = false)
-    @CreationTimestamp
-    private LocalDateTime createdAt;
-
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
 
     public OrderEntity(Long customerId) {
         this.customerId = customerId;

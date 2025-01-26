@@ -35,8 +35,8 @@ services:
       POSTGRES_PASSWORD: root
       POSTGRES_DB: nanomarket_db
       PGDATA: /var/lib/postgresql/data/pgdata
-#    ports:
-#      - "5433:5432"
+    ports:
+      - "5432:5432"
     volumes:
       - ./nanomarket_db_data:/var/lib/postgresql/data/pgdata
     deploy:

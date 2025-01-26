@@ -40,7 +40,6 @@ public class ProductController {
                 - **name**: Filter by product name (partial match, case insensitive).
                 - **categoryId**: Filter by category ID (exact match).
                 - **brandId**: Filter by brand ID (exact match).
-                Example: ?filters[name]=phone&filters[categoryId]=1
                 """) Map<String, String> filters,
             @RequestParam(defaultValue = "0")
             @Parameter(description = "Page number", example = "0") Integer page,

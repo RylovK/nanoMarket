@@ -178,3 +178,35 @@ databaseChangeLog:
             referencedTableName: product
             referencedColumnNames: id
             onDelete: CASCADE
+
+  - changeSet:
+      id: create-category-index
+      author: KRylov
+      changes:
+        - createIndex:
+            tableName: product
+            indexName: idx_product_category
+            columns:
+              - column:
+                  name: category_id
+
+  - changeSet:
+      id: create-brand-index
+      author: KRylov
+      changes:
+        - createIndex:
+            tableName: product
+            indexName: idx_product_brand
+            columns:
+              - column:
+                  name: brand_id
+
+  - changeSet:
+      id: create-lower-name-index
+      author: your_name
+      changes:
+        - sql:
+            sql: >
+              CREATE INDEX idx_product_lower_name
+              ON product USING btree (lower(name));
+

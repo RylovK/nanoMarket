@@ -38,8 +38,7 @@ public class StockController {
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "List of product reservation requests",
                     required = true,
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ProductReservationRequest.class))
+                    content = @Content(mediaType = "application/json")
             ))
     public ResponseEntity<Void> reserveProducts(
             @RequestBody @Valid

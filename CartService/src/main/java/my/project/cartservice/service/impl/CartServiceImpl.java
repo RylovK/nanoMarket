@@ -30,23 +30,24 @@ public class CartServiceImpl implements CartService {
     }
 
     public void updateCart(CartUpdateRequest request) {
-        ProductAvailabilityDTO product = productFeignClient.getProductAvailability(request.getProductId());
+        Long productId = request.productId();
+        ProductAvailabilityDTO product = productFeignClient.getProductAvailability(productId);
 
         if (product == null) {
             log.error("Product not found");
-            throw new IllegalArgumentException("Product not found: " + request.getProductId());
+            throw new IllegalArgumentException("Product not found: " + productId);
         }
-        if (request.getQuantity() > product.quantity()) {
+        if (request.quantity() > product.quantity()) {
             log.warn("Quantity is greater than product stock");
-            throw new IllegalArgumentException("Not enough stock for product: " + request.getProductId());
+            throw new IllegalArgumentException("Not enough stock for product: " + productId);
         }
 
-        Cart cart = getCart(request.getCartId());
+        Cart cart = getCart(request.cartId());
 
-        if (request.getQuantity() > 0) {
-            cart.getItems().put(request.getProductId(), request.getQuantity());
+        if (request.quantity() > 0) {
+            cart.getItems().put(productId, request.quantity());
         } else {
-            cart.getItems().remove(request.getProductId());
+            cart.getItems().remove(productId);
         }
 
         cart.setLastUpdated(LocalDateTime.now());

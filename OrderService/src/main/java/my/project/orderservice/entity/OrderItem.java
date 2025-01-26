@@ -11,12 +11,7 @@ import java.util.UUID;
 
 @Entity
 @Getter @Setter
-public class OrderItem {
-
-    @Id
-    @UuidGenerator
-    @Column(updatable = false, nullable = false)
-    private UUID itemId;
+public class OrderItem extends BaseEntity {
 
     @Column(nullable = false)
     private Long productId;
@@ -26,8 +21,4 @@ public class OrderItem {
 
     @Column(nullable = false)
     private BigDecimal price;
-
-    @ManyToOne
-    @JoinColumn(name = "order_id", nullable = false)
-    private OrderEntity order;
 }

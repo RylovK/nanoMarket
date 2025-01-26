@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -29,7 +28,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public OrderDTO createOrder(OrderEntity orderEntity) {
         OrderEntity saved = orderRepository.save(orderEntity);
-        log.info("Order {} created for customer: {}", saved.getOrderId(), saved.getCustomerId());
+        log.info("Order {} created for customer: {}", saved.getId(), saved.getCustomerId());
         return orderMapper.toOrderDTO(saved);
     }
 

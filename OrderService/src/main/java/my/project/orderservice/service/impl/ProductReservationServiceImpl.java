@@ -80,7 +80,6 @@ public class ProductReservationServiceImpl implements ProductReservationService 
         item.setProductId(productId);
         item.setQuantity(quantityToOrder);
         item.setPrice(availability.price());
-        item.setOrder(orderEntity);
         orderEntity.getItems().add(item);
 
         BigDecimal total = orderEntity.getTotal().add(calculateTotal(availability.price(), quantityToOrder));

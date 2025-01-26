@@ -4,9 +4,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.HashSet;
-import java.util.Set;
-
 @Entity @Getter @Setter
 public class Brand extends BaseEntity {
 
@@ -14,9 +11,6 @@ public class Brand extends BaseEntity {
     private String brandName;
 
     private String logoUrl;
-
-    @OneToMany(mappedBy = "brand")
-    private Set<Product> products = new HashSet<>();
 
     @Override
     public final boolean equals(Object o) {
