@@ -27,9 +27,6 @@ public class MinioClientService implements FileUploadService {
     @Value("${minio.endpoint}")
     private String endpoint;
 
-//    @Value("${minio.region}")
-//    private String region;
-
     private MinioClient minioClient;
 
     @PostConstruct
@@ -43,6 +40,10 @@ public class MinioClientService implements FileUploadService {
 
     @Override
     public String uploadFile(MultipartFile file, String bucketName) {
+        log.debug("Received file with content type: {}, file name is: {}, file size is: {}",
+                file.getContentType(),
+                file.getOriginalFilename(),
+                file.getSize());
         try {
             boolean found =
                     minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build());

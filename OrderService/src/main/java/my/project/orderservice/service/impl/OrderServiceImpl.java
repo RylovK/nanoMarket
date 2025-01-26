@@ -46,6 +46,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
     public OrderDTO updateOrderStatus(UUID orderId, OrderEntity.Status newStatus) {
         OrderEntity orderEntity = orderRepository.findById(orderId)
                 .orElseThrow(EntityNotFoundException::new);
@@ -55,6 +56,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
     public boolean deleteOrder(UUID orderId) {
         return orderRepository.findById(orderId)
                 .map(orderEntity -> {

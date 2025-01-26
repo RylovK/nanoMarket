@@ -16,7 +16,7 @@ import java.util.UUID;
 @Getter @Setter
 public class OrderDTO {
 
-    private UUID orderId;
+    private UUID id;
     private Long customerId;
     private BigDecimal total;
     private OrderEntity.Status status;
