@@ -166,6 +166,24 @@ services:
       - SPRING_PROFILES_ACTIVE=dev
     restart: on-failure
 
+  gateway-server:
+    image: nanomarket/gatewayserver:latest
+    container_name: gateway
+    build:
+      context: ./GatewayServer
+      dockerfile: Dockerfile
+    ports:
+      - "8072:8072"
+    depends_on:
+      eureka:
+        condition: service_healthy
+    networks:
+      - backend
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - SERVER_PORT=8072
+    restart: on-failure
+
 volumes:
   nanomarket_db_data:
   minio_data:
