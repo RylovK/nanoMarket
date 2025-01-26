@@ -7,7 +7,7 @@ databaseChangeLog:
             tableName: order_entity
             columns:
               - column:
-                  name: order_id
+                  name: id
                   type: UUID
                   constraints:
                     primaryKey: true
@@ -44,7 +44,7 @@ databaseChangeLog:
             tableName: order_item
             columns:
               - column:
-                  name: item_id
+                  name: id
                   type: UUID
                   constraints:
                     primaryKey: true
@@ -65,6 +65,14 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP
+              - column:
                   name: order_id
                   type: UUID
                   constraints:
@@ -74,4 +82,4 @@ databaseChangeLog:
             baseColumnNames: order_id
             constraintName: fk_order_item_order
             referencedTableName: order_entity
-            referencedColumnNames: order_id
+            referencedColumnNames: id

@@ -19,14 +19,12 @@ import my.project.productservice.repository.CategoryRepository;
 import my.project.productservice.repository.ProductImageRepository;
 import my.project.productservice.repository.ProductRepository;
 import my.project.productservice.repository.specifications.ProductSpecification;
-import my.project.productservice.service.FileUploadService;
 import my.project.productservice.service.ProductService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +41,6 @@ public class ProductServiceImpl implements ProductService {
     private final BrandRepository brandRepository;
     private final CategoryRepository categoryRepository;
     private final ProductMapper productMapper;
-    private final FileUploadService fileUploadService;
     private final ProductImageRepository productImageRepository;
 
     @Override
@@ -132,7 +129,7 @@ public class ProductServiceImpl implements ProductService {
         ProductImage productImage = new ProductImage();
         productImage.setImageUrl(urlToImage);
         productImage.setProduct(product);
-        product.getImages().add(productImage);
+        product.addImage(productImage);
         productImageRepository.save(productImage);
         Product saved = productRepository.save(product);
         log.info("Image for {} uploaded successfully", product.getName());

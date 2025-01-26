@@ -14,11 +14,10 @@ public interface OrderMapper {
     OrderDTO toOrderDTO(OrderEntity orderEntity);
 
 //    @Mapping(target = "order", ignore = true)
-    OrderItemDTO toOrderItemDTO(OrderItem orderItem);
-
-    @Mapping(target = "items", source = "items")
-    OrderEntity toOrderEntity(OrderDTO orderDTO);
-
-    @Mapping(target = "order", ignore = true)
-    OrderItem toOrderItemEntity(OrderItemDTO orderItemDTO);
+//    OrderItemDTO toOrderItemDTO(OrderItem orderItem);
+//
+//    @Mapping(target = "items", source = "items")
+//    OrderEntity toOrderEntity(OrderDTO orderDTO);
+//
+//    OrderItem toOrderItemEntity(OrderItemDTO orderItemDTO);
 }

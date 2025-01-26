@@ -1,28 +1,20 @@
 package my.project.orderservice.entity;
 
 import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-import org.hibernate.annotations.UuidGenerator;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.*;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Entity
 @Getter @Setter @NoArgsConstructor
-@Where(clause = "status != 'DELETED'")
-public class OrderEntity {
-    @Id
-    @UuidGenerator
-    @Column(updatable = false, nullable = false)
-    private UUID orderId;
+@SQLRestriction("status <> 'DELETED'")
+public class OrderEntity extends BaseEntity {
 
     @Column(nullable = false)
     private Long customerId;
@@ -35,13 +27,6 @@ public class OrderEntity {
 
     @Enumerated(EnumType.STRING)
     private Status status = Status.CREATED;
-
-    @Column(updatable = false)
-    @CreationTimestamp
-    private LocalDateTime createdAt;
-
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
 
     public OrderEntity(Long customerId) {
         this.customerId = customerId;

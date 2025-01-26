@@ -4,19 +4,12 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
-import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity @Getter @Setter
-public class Category {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Category extends BaseEntity {
 
     @Column(nullable = false, unique = true)
     @NotBlank
@@ -33,13 +26,16 @@ public class Category {
     @OneToMany(mappedBy = "parent")
     private Set<Category> subcategories = new HashSet<>();
 
-//    @OneToMany(mappedBy = "category")
-//    private Set<Product> products = new HashSet<>();
+    @Override
+    public final boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Category category)) return false;
 
-    @Column(updatable = false)
-    @CreationTimestamp
-    private LocalDateTime createdAt;
+        return getId().equals(category.getId());
+    }
 
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
+    @Override
+    public int hashCode() {
+        return getId().hashCode();
+    }
 }

@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -29,7 +28,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public OrderDTO createOrder(OrderEntity orderEntity) {
         OrderEntity saved = orderRepository.save(orderEntity);
-        log.info("Order {} created for customer: {}", saved.getOrderId(), saved.getCustomerId());
+        log.info("Order {} created for customer: {}", saved.getId(), saved.getCustomerId());
         return orderMapper.toOrderDTO(saved);
     }
 
@@ -47,6 +46,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
     public OrderDTO updateOrderStatus(UUID orderId, OrderEntity.Status newStatus) {
         OrderEntity orderEntity = orderRepository.findById(orderId)
                 .orElseThrow(EntityNotFoundException::new);
@@ -56,14 +56,14 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
     public boolean deleteOrder(UUID orderId) {
-        Optional<OrderEntity> byId = orderRepository.findById(orderId);
-        if (byId.isPresent()) {
-            OrderEntity orderEntity = byId.get();
-            orderEntity.setStatus(OrderEntity.Status.DELETED);
-            orderRepository.save(orderEntity);
-            return true;
-        }
-        return false;
+        return orderRepository.findById(orderId)
+                .map(orderEntity -> {
+                    orderEntity.setStatus(OrderEntity.Status.DELETED);
+                    orderRepository.save(orderEntity);
+                    return true;
+                })
+                .orElse(false);
     }
 }
