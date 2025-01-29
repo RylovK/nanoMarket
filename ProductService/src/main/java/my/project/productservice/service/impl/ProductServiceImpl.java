@@ -100,7 +100,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductAvailabilityDTO getProductAvailability(Long id) {
         log.debug("Getting product availability by id {}", id);
-        return productMapper.toProductAvailabilityDTO(productRepository.findById(id).orElseThrow(ProductNotFoundException::new));
+        return productRepository.findAvailabilityById(id).orElseThrow(ProductNotFoundException::new);
     }
 
 

@@ -26,7 +26,7 @@ public class Product extends BaseEntity {
     private BigDecimal price;
 
     @NotNull
-    private int quantity;
+    private Integer quantity;
 
     @ManyToOne
     @JoinColumn(name = "category_id")

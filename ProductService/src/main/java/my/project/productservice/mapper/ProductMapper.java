@@ -24,8 +24,6 @@ public interface ProductMapper {
     @Mapping(target = "id", ignore = true)
     Product updateProductDTO(ProductDTO productDTO, @MappingTarget Product product);
 
-    ProductAvailabilityDTO toProductAvailabilityDTO(Product product);
-
     default List<String> toImages(List<ProductImage> productImages) {
         return productImages.stream()
                 .map(ProductImage::getImageUrl)
