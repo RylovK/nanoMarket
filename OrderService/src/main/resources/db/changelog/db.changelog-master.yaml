@@ -83,3 +83,36 @@ databaseChangeLog:
             constraintName: fk_order_item_order
             referencedTableName: order_entity
             referencedColumnNames: id
+
+  - changeSet:
+      id: add_idx_orders_customer_id
+      author: KRylov (generated)
+      changes:
+        - createIndex:
+            tableName: order_entity
+            indexName: idx_orders_customer_id
+            columns:
+              - column:
+                  name: customer_id
+
+  - changeSet:
+      id: add_idx_orders_order_date
+      author: KRylov (generated)
+      changes:
+        - createIndex:
+            tableName: order_entity
+            indexName: idx_orders_order_date
+            columns:
+              - column:
+                  name: created_at
+
+  - changeSet:
+      id: add_idx_orders_status
+      author: KRylov (generated)
+      changes:
+        - createIndex:
+            tableName: order_entity
+            indexName: idx_orders_status
+            columns:
+              - column:
+                  name: status
