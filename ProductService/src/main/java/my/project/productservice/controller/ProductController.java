@@ -14,12 +14,14 @@ import my.project.productservice.validator.ProductValidator;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Map;
+
 @RestController
 @RequestMapping("/api/v1/products")
 @RequiredArgsConstructor
@@ -31,22 +33,35 @@ public class ProductController {
     private final FileUploadService fileUploadService;
 
     @GetMapping
-    @Operation(summary = "Get all products with filters and pagination",
-            description = "Retrieve a paginated list of products with optional filters")
+    @Operation(
+            summary = "Get all products with filters and pagination",
+            description = """
+                    Retrieve a paginated list of products with optional filters.
+                    Filters include name (partial match, case-insensitive), categoryId (exact match), and brandId (exact match)
+                    """)
     public ResponseEntity<Page<ProductDTO>> getProducts(
-            @RequestParam
+            @RequestParam(required = false)
             @Parameter(description = """
-                Map of filters to apply. Available keys:
-                - **name**: Filter by product name (partial match, case insensitive).
-                - **categoryId**: Filter by category ID (exact match).
-                - **brandId**: Filter by brand ID (exact match).
-                """) Map<String, String> filters,
+                    Map of filters to apply. Available keys:
+                    - **name**: Filter by product name (partial match, case insensitive).
+                    - **categoryId**: Filter by category ID (exact match).
+                    - **brandId**: Filter by brand ID (exact match).
+                    """
+            ) Map<String, String> filters,
             @RequestParam(defaultValue = "0")
             @Parameter(description = "Page number", example = "0") Integer page,
             @RequestParam(defaultValue = "25")
-            @Parameter(description = "Page size", example = "25") Integer size) {
-        Pageable pageable = PageRequest.of(page, size);
+            @Parameter(description = "Number of items per page", example = "25") Integer size,
+            @RequestParam(defaultValue = "id,asc")
+            @Parameter(description = "Sorting criteria in the format: property,direction. Default is 'id,asc'.", example = "id,asc") String sort) {
+
+        String[] sortParams = sort.split(",");
+        Sort.Direction direction = Sort.Direction.fromString(sortParams[1]);
+        Sort sortBy = Sort.by(direction, sortParams[0]);
+
+        Pageable pageable = PageRequest.of(page, size, sortBy);
         Page<ProductDTO> allProducts = productService.getAllProducts(filters, pageable);
+
         return ResponseEntity.ok(allProducts);
     }
 
@@ -69,7 +84,7 @@ public class ProductController {
                     content = @Content(mediaType = "application/json")
             ))
     public ResponseEntity<ProductDTO> createProduct(@RequestBody @Valid ProductDTO productDTO,
-            BindingResult bindingResult) {
+                                                    BindingResult bindingResult) {
         productValidator.validate(productDTO, bindingResult);
         if (bindingResult.hasErrors()) {
             throw new ValidationErrorException(bindingResult);

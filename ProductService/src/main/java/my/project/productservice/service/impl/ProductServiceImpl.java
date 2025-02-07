@@ -109,7 +109,6 @@ public class ProductServiceImpl implements ProductService {
     public void reserveProducts(List<ProductReservationRequest> reservationRequests) {
         List<Product> productsToReserve = new ArrayList<>();
         for (ProductReservationRequest reservationRequest : reservationRequests) {
-            System.out.println(reservationRequest.productId() + ": " + reservationRequest.quantity());
             Product product = productRepository.findById(reservationRequest.productId()).orElseThrow(ProductNotFoundException::new);
             if (product.getQuantity() < reservationRequest.quantity()) {
                 log.warn("Product {} is out of stock", product.getName());
