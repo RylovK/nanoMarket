@@ -1,5 +1,6 @@
 package my.project.orderservice.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import my.project.orderservice.entity.OrderEntity;
@@ -14,6 +15,7 @@ import java.util.UUID;
  * order status, and the list of order items.
  */
 @Getter @Setter
+@AllArgsConstructor
 public class OrderDTO {
 
     private UUID id;
