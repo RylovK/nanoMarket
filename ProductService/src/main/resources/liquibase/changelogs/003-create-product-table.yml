@@ -1,0 +1,61 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-product-table
+      author: KRylov (generated)
+      changes:
+        - createTable:
+            tableName: product
+            columns:
+              - column:
+                  name: id
+                  type: bigserial
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: price
+                  type: decimal(10, 2)
+                  defaultValue: "0.00"
+              - column:
+                  name: quantity
+                  type: int
+                  defaultValue: "0"
+              - column:
+                  name: category_id
+                  type: bigint
+              - column:
+                  name: brand_id
+                  type: bigint
+              - column:
+                  name: created_at
+                  type: timestamp
+                  defaultValueComputed: current_timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: timestamp
+        - addForeignKeyConstraint:
+            baseTableName: product
+            baseColumnNames: category_id
+            constraintName: fk_product_category
+            referencedTableName: category
+            referencedColumnNames: id
+            onDelete: RESTRICT
+        - addForeignKeyConstraint:
+            baseTableName: product
+            baseColumnNames: brand_id
+            constraintName: fk_product_brand
+            referencedTableName: brand
+            referencedColumnNames: id
+            onDelete: RESTRICT

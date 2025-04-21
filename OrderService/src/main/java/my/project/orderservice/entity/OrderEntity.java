@@ -33,7 +33,9 @@ public class OrderEntity extends BaseEntity {
     }
 
     public enum Status {
+        PENDING,
         CREATED,
+        CONFIRMED,
         PROCESSING,
         SHIPPED,
         DELIVERED,

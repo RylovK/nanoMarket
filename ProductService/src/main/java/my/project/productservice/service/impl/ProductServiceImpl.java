@@ -60,7 +60,7 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     @Override
     public ProductDTO createProduct(ProductDTO productDTO) {
-        Brand brand = brandRepository.findById(productDTO.getBrand().getId()).orElseThrow(BrandNotFoundException::new);
+        Brand brand = brandRepository.findById(productDTO.getBrand().id()).orElseThrow(BrandNotFoundException::new);
         Category category = categoryRepository.findById(productDTO.getCategory().getId()).orElseThrow(CategoryNotFoundException::new);
         Product product = productMapper.toProduct(productDTO);
         product.setBrand(brand);
@@ -74,7 +74,7 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     @Override
     public ProductDTO updateProduct(Long id, ProductDTO productDTO) {
-        Brand brand = brandRepository.findById(productDTO.getBrand().getId()).orElseThrow(BrandNotFoundException::new);
+        Brand brand = brandRepository.findById(productDTO.getBrand().id()).orElseThrow(BrandNotFoundException::new);
         Category category = categoryRepository.findById(productDTO.getCategory().getId()).orElseThrow(CategoryNotFoundException::new);
         Product product = productRepository.findById(id).orElseThrow(ProductNotFoundException::new);
         Product updated = productMapper.updateProductDTO(productDTO, product);
@@ -102,7 +102,6 @@ public class ProductServiceImpl implements ProductService {
         log.debug("Getting product availability by id {}", id);
         return productRepository.findAvailabilityById(id).orElseThrow(ProductNotFoundException::new);
     }
-
 
     @Override
     @Transactional

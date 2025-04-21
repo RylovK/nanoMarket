@@ -9,6 +9,9 @@ import my.project.productservice.exception.BrandNotFoundException;
 import my.project.productservice.mapper.BrandMapper;
 import my.project.productservice.repository.BrandRepository;
 import my.project.productservice.service.BrandService;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 
 
@@ -36,6 +39,7 @@ public class BrandServiceImpl implements BrandService {
         return brandRepository.findAll(specification, pageable).map(brandMapper::toDto);
     }
 
+    @Cacheable(value = "brandCache", key = "#id")
     @Override
     public BrandDTO getBrandById(long id) {
         log.debug("Getting brand {}", id);
@@ -53,6 +57,7 @@ public class BrandServiceImpl implements BrandService {
     }
 
     @Transactional
+    @CachePut(value = "brandCache", key = "#id")
     @Override
     public BrandDTO updateBrand(long id, BrandDTO brandDTO) {
         Optional<Brand> byId = brandRepository.findById(id);
@@ -65,6 +70,7 @@ public class BrandServiceImpl implements BrandService {
     }
 
     @Transactional
+    @CacheEvict(value = "brandCache", key = "#id")
     @Override
     public boolean deleteBrand(long id) {
         Optional<Brand> byId = brandRepository.findById(id);
@@ -77,6 +83,7 @@ public class BrandServiceImpl implements BrandService {
     }
 
     @Transactional
+    @CachePut(value = "brandCache", key = "#id")
     @Override
     public BrandDTO uploadImage(Long id, String urlToImage) {
         Brand brand = brandRepository.findById(id).orElseThrow(BrandNotFoundException::new);

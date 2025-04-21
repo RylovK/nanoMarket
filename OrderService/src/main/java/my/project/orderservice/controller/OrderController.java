@@ -9,8 +9,8 @@ import lombok.RequiredArgsConstructor;
 import my.project.orderservice.dto.OrderDTO;
 import my.project.orderservice.dto.OrderRequest;
 import my.project.orderservice.entity.OrderEntity;
+import my.project.orderservice.service.OrderBuilderService;
 import my.project.orderservice.service.OrderService;
-import my.project.orderservice.service.ProductReservationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,7 +22,7 @@ import java.util.UUID;
 @Tag(name = "Order API", description = "API for managing orders")
 public class OrderController {
 
-    private final ProductReservationService productReservationService;
+    private final OrderBuilderService orderBuilderService;
     private final OrderService orderService;
 
     @GetMapping("/{orderId}")
@@ -55,7 +55,7 @@ public class OrderController {
     public ResponseEntity<OrderDTO> createOrder(
             @RequestBody @Valid
             @Parameter(description = "Order request details") OrderRequest orderRequest) {
-        var orderEntity = productReservationService.checkStockAndReserveProducts(orderRequest);
+        var orderEntity = orderBuilderService.buildOrderFromCart(orderRequest.customerId());
         var dto = orderService.createOrder(orderEntity);
         return ResponseEntity.ok(dto);
     }

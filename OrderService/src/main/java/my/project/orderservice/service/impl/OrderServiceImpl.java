@@ -4,10 +4,13 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import my.project.orderservice.dto.*;
+import my.project.orderservice.messaging.KafkaTopicsConfig;
+import my.project.orderservice.messaging.events.OrderCreatedEvent;
 import my.project.orderservice.entity.OrderEntity;
 import my.project.orderservice.mapper.OrderMapper;
-import my.project.orderservice.repository.OrderRepository;
+import my.project.orderservice.repository.*;
 import my.project.orderservice.service.OrderService;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,13 +26,23 @@ public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
     private final OrderMapper orderMapper;
+    private final KafkaTemplate<String, OrderCreatedEvent> kafkaTemplate;
+
+    private final KafkaTopicsConfig kafkaTopicsConfig;
 
     @Override
     @Transactional
     public OrderDTO createOrder(OrderEntity orderEntity) {
+        orderEntity.setStatus(OrderEntity.Status.PENDING);
         OrderEntity saved = orderRepository.save(orderEntity);
         log.info("Order {} created for customer: {}", saved.getId(), saved.getCustomerId());
-        return orderMapper.toOrderDTO(saved);
+
+        OrderCreatedEvent event = orderMapper.toOrderCreatedEvent(saved);
+
+        log.info("Sending order created event to Kafka for order: {}", saved.getId());
+
+        kafkaTemplate.send(kafkaTopicsConfig.getOrderCreated(), event);
+        return orderMapper.toOrderDTO(saved); //TODO: нужно ли возвращать до подтверждения
     }
 
     @Override

@@ -1,13 +1,14 @@
 package my.project.orderservice.repository;
 
-import my.project.orderservice.dto.OrderDTO;
+
 import my.project.orderservice.entity.OrderEntity;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.UUID;
 
+@Repository
 public interface OrderRepository extends CrudRepository<OrderEntity, UUID> {
 
     List<OrderEntity> findByCustomerId(Long customerId);

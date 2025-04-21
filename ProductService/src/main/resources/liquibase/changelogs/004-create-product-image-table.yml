@@ -1,0 +1,40 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-product-image-table
+      author: KRylov (generated)
+      changes:
+        - createTable:
+            tableName: product_image
+            columns:
+              - column:
+                  name: id
+                  type: bigserial
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: product_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: image_url
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: timestamp
+                  defaultValueComputed: current_timestamp
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: timestamp
+        - addForeignKeyConstraint:
+            baseTableName: product_image
+            baseColumnNames: product_id
+            constraintName: fk_product_image_product
+            referencedTableName: product
+            referencedColumnNames: id
+            onDelete: CASCADE

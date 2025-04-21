@@ -43,16 +43,16 @@ public class ProductReservationServiceImpl implements ProductReservationService 
         var orderEntity = new OrderEntity(customerId);
         var cart = validateAndGetCart(customerId);
 
-        var reservationRequestList = cart.getItems()
-                .entrySet()
-                .stream()
-                .map(entry -> {
-                    checkStockAndAddToOrder(entry, orderEntity);
-                    return createProductReservationRequest(entry);
-                })
-                .toList();
+//        var reservationRequestList = cart.getItems()
+//                .entrySet()
+//                .stream()
+//                .map(entry -> {
+//                    checkStockAndAddToOrder(entry, orderEntity);
+//                    return createProductReservationRequest(entry);
+//                })
+//                .toList();
 
-        reserveProducts(reservationRequestList);
+//        reserveProducts(reservationRequestList);
         log.info("Successfully reserved products for customer: {}", customerId);
         cartFeignClient.clearCart(customerId);
 

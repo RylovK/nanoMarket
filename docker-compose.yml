@@ -71,16 +71,35 @@ services:
     networks:
       - backend
 
-  redis:
+  redis_cart:
     image: redis:7.4.1
-    container_name: redis_container
-    restart: unless-stopped
-    environment:
-      - REDIS_PASSWORD=redis_password
+    container_name: redis_cart
+    restart: always
+#    environment:
+#      - REDIS_PASSWORD=redis_password
     volumes:
       - ./redis_data:/data
+      - ./CartService/redis.conf:/usr/local/etc/redis/redis.conf
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: ["CMD", "redis-cli", "-h", "localhost", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    networks:
+      - backend
+
+  redis_cache:
+    image: redis:7.4.1
+    container_name: redis_cache
+    restart: always
+    #    environment:
+    #      - REDIS_PASSWORD=redis_password
+    volumes:
+      - ./ProductService/redis.conf:/usr/local/etc/redis/redis.conf
+    command: [ "redis-server", "/usr/local/etc/redis/redis.conf" ]
+    healthcheck:
+      test: [ "CMD", "redis-cli", "-h", "localhost", "ping" ]
       interval: 10s
       timeout: 5s
       retries: 3
@@ -139,7 +158,7 @@ services:
     depends_on:
       eureka:
         condition: service_healthy
-      redis:
+      redis_cart:
         condition: service_healthy
     networks:
       - backend

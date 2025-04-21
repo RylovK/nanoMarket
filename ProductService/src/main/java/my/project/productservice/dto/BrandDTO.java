@@ -14,15 +14,13 @@ import java.util.Set;
  * Data transfer object (DTO) representing a product brand.
  * Contains information about the brand's name and logo URL.
  */
-@Getter @Setter
-public class BrandDTO {
+public record BrandDTO(
+        Long id,
 
-    private Long id;
+        @NotBlank(message = "Brand name cannot be blank")
+        @Size(min = 1, max = 50, message = "Brand name must be between 1 and 50 symbols")
+        String brandName,
 
-    @NotBlank(message = "Brand name cannot be blank")
-    @Size(min = 1, max = 50, message = "Brand name must be between 1 and 50 symbols")
-    private String brandName;
-
-    @URL(message = "Invalid URL format")
-    private String logoUrl;
-}
+        @URL(message = "Invalid URL format")
+        String logoUrl
+) {}
