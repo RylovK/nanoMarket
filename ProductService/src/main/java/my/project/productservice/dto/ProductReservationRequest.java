@@ -1,9 +1,5 @@
 package my.project.productservice.dto;
 
-import jakarta.validation.constraints.Min;
+import java.math.BigDecimal;
 
-/**
- * Data transfer object (DTO) representing a request to reserve a product.
- * Contains the product ID and the quantity to be reserved.
- */
-public record ProductReservationRequest (Long productId, @Min(1) Integer quantity) {}
+public record ProductReservationRequest (Long productId, BigDecimal price, Integer quantity) {}

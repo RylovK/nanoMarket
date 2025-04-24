@@ -5,20 +5,19 @@ import lombok.extern.slf4j.Slf4j;
 import my.project.productservice.dto.ProductAvailabilityDTO;
 import my.project.productservice.dto.ProductDTO;
 import my.project.productservice.dto.ProductReservationRequest;
-import my.project.productservice.entity.Brand;
-import my.project.productservice.entity.Category;
-import my.project.productservice.entity.Product;
-import my.project.productservice.entity.ProductImage;
+import my.project.productservice.persistence.entity.Brand;
+import my.project.productservice.persistence.entity.Category;
+import my.project.productservice.persistence.entity.Product;
+import my.project.productservice.persistence.entity.ProductImage;
 import my.project.productservice.exception.BrandNotFoundException;
 import my.project.productservice.exception.CategoryNotFoundException;
-import my.project.productservice.exception.OutOfStockException;
 import my.project.productservice.exception.ProductNotFoundException;
 import my.project.productservice.mapper.ProductMapper;
-import my.project.productservice.repository.BrandRepository;
-import my.project.productservice.repository.CategoryRepository;
-import my.project.productservice.repository.ProductImageRepository;
-import my.project.productservice.repository.ProductRepository;
-import my.project.productservice.repository.specifications.ProductSpecification;
+import my.project.productservice.persistence.repository.BrandRepository;
+import my.project.productservice.persistence.repository.CategoryRepository;
+import my.project.productservice.persistence.repository.ProductImageRepository;
+import my.project.productservice.persistence.repository.ProductRepository;
+import my.project.productservice.persistence.repository.specifications.ProductSpecification;
 import my.project.productservice.service.ProductService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -105,19 +104,20 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
-    public void reserveProducts(List<ProductReservationRequest> reservationRequests) {
+    public boolean reserveProducts(List<ProductReservationRequest> reservationRequests) {
         List<Product> productsToReserve = new ArrayList<>();
         for (ProductReservationRequest reservationRequest : reservationRequests) {
             Product product = productRepository.findById(reservationRequest.productId()).orElseThrow(ProductNotFoundException::new);
             if (product.getQuantity() < reservationRequest.quantity()) {
                 log.warn("Product {} is out of stock", product.getName());
-                throw new OutOfStockException("Product " + product.getName() + " is out of stock");
+                return false;
             }
             product.setQuantity(product.getQuantity() - reservationRequest.quantity());
             productsToReserve.add(product);
         }
         productRepository.saveAll(productsToReserve);
         log.info("Products was reserved successfully");
+        return true;
     }
 
     @Override

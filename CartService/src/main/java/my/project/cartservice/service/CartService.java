@@ -1,7 +1,8 @@
 package my.project.cartservice.service;
 
-import my.project.cartservice.dto.CartUpdateRequest;
 import my.project.cartservice.entity.Cart;
+import my.project.cartservice.entity.CartItem;
+
 /**
  * Service interface for managing shopping cart operations.
  * Provides methods to retrieve, update, and clear a cart.
@@ -16,12 +17,8 @@ public interface CartService {
      */
     Cart getCart(Long cartId);
 
-    /**
-     * Updates the shopping cart with the provided details.
-     *
-     * @param request the {@link CartUpdateRequest} object containing update details
-     */
-    void updateCart(CartUpdateRequest request);
+
+    void updateCart(Long customerId, CartItem cartItem);
 
     /**
      * Clears all items from the shopping cart with the specified ID.

@@ -1,7 +1,7 @@
 package my.project.productservice.mapper;
 
 import my.project.productservice.dto.CategoryDTO;
-import my.project.productservice.entity.Category;
+import my.project.productservice.persistence.entity.Category;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;

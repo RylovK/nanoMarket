@@ -6,6 +6,7 @@ import my.project.orderservice.entity.OrderEntity;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Service interface for managing orders in the Order Service.
@@ -19,7 +20,7 @@ public interface OrderService {
      * @param orderEntity the {@link OrderEntity} object containing the details of the order to be created
      * @return the created {@link OrderDTO} object representing the order
      */
-    OrderDTO createOrder(@Valid OrderEntity orderEntity);
+    OrderDTO createOrder(@Valid OrderEntity orderEntity) throws ExecutionException, InterruptedException;
 
     /**
      * Retrieves an order by its unique identifier.

@@ -26,7 +26,10 @@ public class ProductInventoryListener {
     private final KafkaTopicsConfig kafkaTopicsConfig;
 
 
-    @KafkaListener(topics = "#{kafkaTopicsConfig.productReserved}", groupId = "order-service-group")
+    @KafkaListener(
+            topics = "${spring.kafka.topic.productReserved}",
+    containerFactory = "productReservedListenerContainerFactory"
+    )
     @Transactional
     public void handleProductReservedEvent(ProductReservedEvent event) {
         log.info("Handling product reserved event: {}", event);
@@ -39,7 +42,7 @@ public class ProductInventoryListener {
         log.info("Cart cleared for customer {}", customerId);
     }
 
-    @KafkaListener(topics = "#{kafkaTopicsConfig.productOutOfStock}", groupId = "order-service-group")
+    @KafkaListener(topics = "${spring.kafka.topic.productOutOfStock}")
     @Transactional
     public void handleProductOutOfStockEvent(ProductOutOfStockEvent event) {
         log.info("Handling product out of stock event: {}", event);

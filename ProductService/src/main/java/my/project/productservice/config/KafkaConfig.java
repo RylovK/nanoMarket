@@ -1,10 +1,8 @@
-package my.project.orderservice.config;
+package my.project.productservice.config;
 
 import lombok.RequiredArgsConstructor;
-import my.project.orderservice.messaging.KafkaTopicsConfig;
-import my.project.orderservice.messaging.events.OrderCancelledEvent;
-import my.project.orderservice.messaging.events.OrderCreatedEvent;
-import my.project.orderservice.messaging.events.ProductReservedEvent;
+import my.project.productservice.messaging.KafkaTopicsConfig;
+import my.project.productservice.messaging.events.OrderCreatedEvent;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -17,6 +15,7 @@ import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.config.TopicBuilder;
 import org.springframework.kafka.core.*;
+import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 
 import java.util.HashMap;
@@ -62,63 +61,55 @@ public class KafkaConfig {
         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, keySerializer);
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, valueSerializer);
-        props.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, enableIdempotence);
         props.put(ProducerConfig.ACKS_CONFIG, acks);
         props.put(ProducerConfig.DELIVERY_TIMEOUT_MS_CONFIG, deliveryTimeoutMs);
         props.put(ProducerConfig.LINGER_MS_CONFIG, lingerMs);
         props.put(ProducerConfig.REQUEST_TIMEOUT_MS_CONFIG, requestTimeoutMs);
+        props.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, enableIdempotence);
+        props.put(ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION, 5);
         return props;
     }
 
     @Bean
-    public ProducerFactory<String, OrderCreatedEvent> orderCreatedProducerFactory() {
+    public ProducerFactory<String, Object> producerFactory() {
         return new DefaultKafkaProducerFactory<>(producerConfigs());
     }
 
     @Bean
-    public KafkaTemplate<String, OrderCreatedEvent> orderCreatedKafkaTemplate() {
-        return new KafkaTemplate<>(orderCreatedProducerFactory());
-    }
-
-
-    @Bean
-    public ProducerFactory<String, OrderCancelledEvent> orderCancelledProducerFactory() {
-        return new DefaultKafkaProducerFactory<>(producerConfigs());
+    public KafkaTemplate<String, Object> kafkaTemplate() {
+        return new KafkaTemplate<>(producerFactory());
     }
 
     @Bean
-    public KafkaTemplate<String, OrderCancelledEvent> orderCancelledKafkaTemplate() {
-        return new KafkaTemplate<>(orderCancelledProducerFactory());
+    public ConsumerFactory<String, OrderCreatedEvent> orderCreatedConsumerFactory() {
+        Map<String, Object> config = new HashMap<>();
+        config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+        config.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+        config.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+        config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ErrorHandlingDeserializer.class);
+        config.put(ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS, JsonDeserializer.class);
+        config.put(JsonDeserializer.TRUSTED_PACKAGES, "*");
+        config.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
+
+        return new DefaultKafkaConsumerFactory<>(
+                config,
+                new StringDeserializer(),
+                new JsonDeserializer<>(OrderCreatedEvent.class, false)
+        );
     }
-
     @Bean
-    public ConsumerFactory<String, ProductReservedEvent> consumerFactory() {
-        JsonDeserializer<ProductReservedEvent> deserializer = new JsonDeserializer<>(ProductReservedEvent.class);
-        deserializer.setRemoveTypeHeaders(false);
-        deserializer.addTrustedPackages("*");
-        deserializer.setUseTypeMapperForKey(true);
-
-        Map<String, Object> props = new HashMap<>();
-        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "kafka-1:9092,kafka-2:9094,kafka-3:9096");
-        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, org.apache.kafka.common.serialization.StringDeserializer.class);
-        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, org.springframework.kafka.support.serializer.JsonDeserializer.class);
-        props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
-        props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
-
-        return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), deserializer);
-    }
-
-    @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, ProductReservedEvent> productReservedListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, ProductReservedEvent> factory =
-                new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(consumerFactory());
+    public ConcurrentKafkaListenerContainerFactory<String, OrderCreatedEvent> orderCreatedKafkaListenerContainerFactory() {
+        var factory = new ConcurrentKafkaListenerContainerFactory<String, OrderCreatedEvent>();
+//        DefaultErrorHandler errorHandler = new DefaultErrorHandler(new DeadLetterPublishingRecoverer(kafkaTemplate()));
+        factory.setConsumerFactory(orderCreatedConsumerFactory());
+//        factory.setCommonErrorHandler(errorHandler);
         return factory;
     }
 
+
     @Bean
-    public NewTopic orderCreatedTopic() {
-        return TopicBuilder.name(kafkaTopicsConfig.getOrderCreated())
+    public NewTopic productReservedTopic() {
+        return TopicBuilder.name(kafkaTopicsConfig.getProductReserved())
                 .partitions(3)
                 .replicas(3)
                 .configs(Map.of("min.insync.replicas", "2"))
@@ -126,8 +117,8 @@ public class KafkaConfig {
     }
 
     @Bean
-    public NewTopic orderCancelledTopic() {
-        return TopicBuilder.name(kafkaTopicsConfig.getOrderCancelled())
+    public NewTopic productOutOfStockTopic() {
+        return TopicBuilder.name(kafkaTopicsConfig.getProductOutOfStock())
                 .partitions(3)
                 .replicas(3)
                 .configs(Map.of("min.insync.replicas", "2"))

@@ -1,6 +1,6 @@
-package my.project.productservice.repository;
+package my.project.productservice.persistence.repository;
 
-import my.project.productservice.entity.Category;
+import my.project.productservice.persistence.entity.Category;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 

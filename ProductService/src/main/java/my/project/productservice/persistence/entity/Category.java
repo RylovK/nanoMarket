@@ -1,4 +1,4 @@
-package my.project.productservice.entity;
+package my.project.productservice.persistence.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;

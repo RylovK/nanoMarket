@@ -10,12 +10,16 @@ import my.project.orderservice.entity.OrderEntity;
 import my.project.orderservice.mapper.OrderMapper;
 import my.project.orderservice.repository.*;
 import my.project.orderservice.service.OrderService;
+import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,17 +36,29 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public OrderDTO createOrder(OrderEntity orderEntity) {
+    public OrderDTO createOrder(OrderEntity orderEntity) throws ExecutionException, InterruptedException {
         orderEntity.setStatus(OrderEntity.Status.PENDING);
         OrderEntity saved = orderRepository.save(orderEntity);
+
         log.info("Order {} created for customer: {}", saved.getId(), saved.getCustomerId());
 
         OrderCreatedEvent event = orderMapper.toOrderCreatedEvent(saved);
 
-        log.info("Sending order created event to Kafka for order: {}", saved.getId());
+                log.debug("Sending order created event to Kafka for order: {}", saved.getId());
 
-        kafkaTemplate.send(kafkaTopicsConfig.getOrderCreated(), event);
-        return orderMapper.toOrderDTO(saved); //TODO: нужно ли возвращать до подтверждения
+        ProducerRecord<String, OrderCreatedEvent> producerRecord = new ProducerRecord<>(
+                kafkaTopicsConfig.getOrderCreated(),
+                String.valueOf(saved.getCustomerId()),
+                event
+        );
+        producerRecord.headers().add("messageId", UUID.randomUUID().toString().getBytes());
+
+        SendResult<String, OrderCreatedEvent> result = kafkaTemplate
+                .send(producerRecord).get();
+
+        log.debug("Order created event sent to Kafka: {}", result.getRecordMetadata());
+
+        return orderMapper.toOrderDTO(saved);
     }
 
     @Override

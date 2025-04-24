@@ -1,0 +1,115 @@
+services:
+  config-server:
+    image: nanomarket/config-server:latest
+    container_name: config-server
+    build:
+      context: ./ConfigServer
+      dockerfile: Dockerfile
+    networks:
+      - backend
+    environment:
+      - SPRING_PROFILES_ACTIVE=git
+      - SPRING_CLOUD_CONFIG_SERVER_GIT_URI=https://github.com/RylovK/nanomarket-config-repo.git
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://config-server:8071/actuator/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  eureka:
+    image: nanomarket/eureka-server:latest
+    container_name: eureka
+    build:
+      context: ./EurekaServer
+      dockerfile: Dockerfile
+    ports:
+      - "8070:8070"
+    depends_on:
+      config-server:
+        condition: service_healthy
+    networks:
+      - backend
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+    restart: on-failure
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://eureka:8070/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+
+
+
+  product-service:
+    image: nanomarket/productservice:latest
+    container_name: product-service
+    build:
+      context: ./ProductService
+      dockerfile: Dockerfile
+#    ports:
+#      - "8081:8081"
+    depends_on:
+      eureka:
+        condition: service_healthy
+    networks:
+      - backend
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+    restart: on-failure
+
+  cart-service:
+    image: nanomarket/cartservice:latest
+    container_name: cart-service
+    build:
+      context: ./CartService
+      dockerfile: Dockerfile
+#    ports:
+#      - "8082:8082"
+    depends_on:
+      eureka:
+        condition: service_healthy
+    networks:
+      - backend
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+    restart: on-failure
+
+  order-service:
+    image: nanomarket/orderservice:latest
+    container_name: order-service
+    build:
+      context: ./OrderService
+      dockerfile: Dockerfile
+#    ports:
+#      - "8083:8083"
+    depends_on:
+      eureka:
+        condition: service_healthy
+    networks:
+      - backend
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+    restart: on-failure
+
+  gateway-server:
+    image: nanomarket/gatewayserver:latest
+    container_name: gateway
+    build:
+      context: ./GatewayServer
+      dockerfile: Dockerfile
+    ports:
+      - "8072:8072"
+    depends_on:
+      eureka:
+        condition: service_healthy
+    networks:
+      - backend
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - SERVER_PORT=8072
+    restart: on-failure
+
+networks:
+  backend:
+    external: true

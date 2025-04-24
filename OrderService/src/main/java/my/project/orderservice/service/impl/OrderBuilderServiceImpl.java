@@ -25,15 +25,20 @@ public class OrderBuilderServiceImpl implements OrderBuilderService {
     public OrderEntity buildOrderFromCart(Long customerId) {
         Cart cart = validateAndGetCart(customerId);
 
+        OrderEntity orderEntity = new OrderEntity(customerId);
+
         List<OrderItem> orderItems = cart.getItems().stream()
                 .map(orderMapper::cartItemToOrderItem)
+                .map(orderItem -> {
+                    orderItem.setOrder(orderEntity);
+                    return orderItem;
+                })
                 .toList();
 
         BigDecimal total = orderItems.stream()
                 .map(item -> item.getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        OrderEntity orderEntity = new OrderEntity(customerId);
         orderEntity.setItems(orderItems);
         orderEntity.setTotal(total);
 

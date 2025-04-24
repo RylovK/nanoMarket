@@ -19,8 +19,10 @@ public class WebConfig implements WebMvcConfigurer {
                 .info(new Info()
                         .title("Order service API")
                         .version("1.0.0")
-                        .description("Documentation for Order service API. " +
-                                "Order service is a part of NanoMarket - online shop project"));
+                        .description("""
+                                Documentation for Order service API.\s
+                                Order service is a part of NanoMarket - online shop project.
+                               """));
     }
 
 }

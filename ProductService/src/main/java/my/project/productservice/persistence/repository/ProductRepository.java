@@ -1,7 +1,7 @@
-package my.project.productservice.repository;
+package my.project.productservice.persistence.repository;
 
 import my.project.productservice.dto.ProductAvailabilityDTO;
-import my.project.productservice.entity.Product;
+import my.project.productservice.persistence.entity.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 

@@ -5,8 +5,8 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import my.project.cartservice.dto.CartUpdateRequest;
 import my.project.cartservice.entity.Cart;
+import my.project.cartservice.entity.CartItem;
 import my.project.cartservice.service.CartService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,16 +29,10 @@ public class CartController {
         return ResponseEntity.ok(cartService.getCart(cartId));
     }
 
-    @PostMapping("/update")
-    @Operation(
-            summary = "Update a cart",
-            description = "Update the contents of a shopping cart based on the provided details",
-            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    description = "Details of the cart to update, including product IDs and quantities",
-                    required = true))
-    public ResponseEntity<String> updateCart(
-            @RequestBody @Valid CartUpdateRequest request) {
-        cartService.updateCart(request);
+    @PostMapping("/{customerId}")
+    public ResponseEntity<String> updateCart(@PathVariable Long customerId,
+                                             @RequestBody @Valid CartItem cartItem) {
+        cartService.updateCart(customerId, cartItem);
         return ResponseEntity.ok("Cart updated successfully");
     }
 

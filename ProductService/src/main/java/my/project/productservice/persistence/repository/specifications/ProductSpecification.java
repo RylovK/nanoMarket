@@ -1,7 +1,7 @@
-package my.project.productservice.repository.specifications;
+package my.project.productservice.persistence.repository.specifications;
 
 import jakarta.persistence.criteria.Predicate;
-import my.project.productservice.entity.Product;
+import my.project.productservice.persistence.entity.Product;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.ArrayList;
@@ -22,10 +22,9 @@ public class ProductSpecification {
                 String key = entry.getKey();
                 String value = entry.getValue().toLowerCase();
                 switch (key) {
-                    case "name" -> {
+                    case "name" ->
                         predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), "%" + value + "%"));
-//                        predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("description")), "%" + value + "%"));
-                    }
+
                     case "categoryId" ->
                             predicates.add(criteriaBuilder.equal(root.get("category").get("id"), Long.parseLong(value)));
                     case "brandId" ->
@@ -34,6 +33,9 @@ public class ProductSpecification {
             }
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         });
+    }
+
+    private ProductSpecification() {
     }
 }
 

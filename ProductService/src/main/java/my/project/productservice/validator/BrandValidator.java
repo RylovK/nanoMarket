@@ -2,8 +2,8 @@ package my.project.productservice.validator;
 
 import lombok.RequiredArgsConstructor;
 import my.project.productservice.dto.BrandDTO;
-import my.project.productservice.entity.Brand;
-import my.project.productservice.repository.BrandRepository;
+import my.project.productservice.persistence.entity.Brand;
+import my.project.productservice.persistence.repository.BrandRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;

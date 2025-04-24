@@ -2,8 +2,8 @@ package my.project.productservice.validator;
 
 import lombok.RequiredArgsConstructor;
 import my.project.productservice.dto.ProductDTO;
-import my.project.productservice.entity.Product;
-import my.project.productservice.repository.ProductRepository;
+import my.project.productservice.persistence.entity.Product;
+import my.project.productservice.persistence.repository.ProductRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;

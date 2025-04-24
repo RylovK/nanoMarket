@@ -1,9 +1,6 @@
-package my.project.productservice.repository;
+package my.project.productservice.persistence.repository;
 
-import my.project.productservice.entity.Brand;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
+import my.project.productservice.persistence.entity.Brand;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 

@@ -1,4 +1,4 @@
-package my.project.orderservice.messaging;
+package my.project.productservice.messaging;
 
 
 import lombok.Getter;
@@ -6,7 +6,8 @@ import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "spring.kafka.topic")
-@Getter @Setter
+@Getter
+@Setter
 public class KafkaTopicsConfig {
     private String orderCreated;
     private String orderCancelled;

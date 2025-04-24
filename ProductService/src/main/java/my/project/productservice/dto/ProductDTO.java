@@ -3,8 +3,6 @@ package my.project.productservice.dto;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
-import my.project.productservice.entity.ProductImage;
-import org.hibernate.validator.constraints.URL;
 
 import java.math.BigDecimal;
 import java.util.List;

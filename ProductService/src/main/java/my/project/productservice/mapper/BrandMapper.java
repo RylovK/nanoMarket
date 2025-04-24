@@ -1,11 +1,10 @@
 package my.project.productservice.mapper;
 
 import my.project.productservice.dto.BrandDTO;
-import my.project.productservice.entity.Brand;
+import my.project.productservice.persistence.entity.Brand;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
-import org.mapstruct.NullValueCheckStrategy;
 
 @Mapper(componentModel = "spring")
 public interface BrandMapper {

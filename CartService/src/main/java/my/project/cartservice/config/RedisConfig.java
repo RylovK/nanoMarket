@@ -13,7 +13,7 @@ public class RedisConfig {
 
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
-        return new LettuceConnectionFactory("redis_container", 6379);
+        return new LettuceConnectionFactory("redis_cart", 6379);
     }
 
     @Bean

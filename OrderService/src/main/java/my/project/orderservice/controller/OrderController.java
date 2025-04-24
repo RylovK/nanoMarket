@@ -11,11 +11,13 @@ import my.project.orderservice.dto.OrderRequest;
 import my.project.orderservice.entity.OrderEntity;
 import my.project.orderservice.service.OrderBuilderService;
 import my.project.orderservice.service.OrderService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
+
 @RestController
 @RequestMapping("/api/v1/orders")
 @RequiredArgsConstructor
@@ -56,8 +58,13 @@ public class OrderController {
             @RequestBody @Valid
             @Parameter(description = "Order request details") OrderRequest orderRequest) {
         var orderEntity = orderBuilderService.buildOrderFromCart(orderRequest.customerId());
-        var dto = orderService.createOrder(orderEntity);
-        return ResponseEntity.ok(dto);
+        OrderDTO dto = null;
+        try {
+            dto = orderService.createOrder(orderEntity);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(dto);
     }
 
     @PutMapping("/{orderId}")
