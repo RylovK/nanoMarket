@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -44,15 +43,11 @@ public class OrderCreatedListener {
         log.info("Received order created event: {}", event);
         log.info("Message Id: {}", messageId);
         log.info("Message Key: {}", messageKey);
-        Optional<ProcessedEvent> foundedMessage = processedEventRepository.findByMessageId(messageId);
-        if (foundedMessage.isPresent()) {
-            log.info("Found duplicate event for messageId: {}", messageId);
-            return;
-        }
+        if (isMessageDuplicate(messageId)) return;
 
         List<ProductReservationRequest> requestList = event.items();
         if (productService.reserveProducts(requestList)) {
-            log.info("Reserved product list: {}", requestList);
+            log.info("Reserved order {} with product list: {}", event.orderId(), requestList);
             ProductReservedEvent reservedEvent = new ProductReservedEvent(event.orderId());
             kafkaTemplate.send(kafkaTopicsConfig.getProductReserved(), reservedEvent);
         } else {
@@ -61,10 +56,19 @@ public class OrderCreatedListener {
         }
         try {
             processedEventRepository.save(new ProcessedEvent(messageId, event.orderId().toString()));
-            log.info("Saved to db {}: {}", messageId, event);
+            log.info("Saved to db processed event {} with messageId: {}", event, messageId);
         } catch (DataIntegrityViolationException e) {
             log.error(e.getMessage());
             throw new RuntimeException(e.getMessage());
         }
+    }
+
+    private boolean isMessageDuplicate(String messageId) {
+        boolean isMessageProcessed = processedEventRepository.existsByMessageId(messageId);
+        if (isMessageProcessed) {
+            log.info("Found duplicate event for messageId: {}", messageId);
+            return true;
+        }
+        return false;
     }
 }

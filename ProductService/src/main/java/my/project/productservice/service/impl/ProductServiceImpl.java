@@ -23,12 +23,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -103,20 +105,36 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public boolean reserveProducts(List<ProductReservationRequest> reservationRequests) {
+        if (reservationRequests.isEmpty()) {
+            log.warn("Reservation requests list is empty");
+            return false;
+        }
+        Map<Long, Product> productsMap = productRepository.findAllById(
+                reservationRequests.stream()
+                        .map(ProductReservationRequest::productId)
+                        .toList()
+        ).stream().collect(Collectors.toMap(Product::getId, product -> product));
+
         List<Product> productsToReserve = new ArrayList<>();
+
         for (ProductReservationRequest reservationRequest : reservationRequests) {
-            Product product = productRepository.findById(reservationRequest.productId()).orElseThrow(ProductNotFoundException::new);
+            Product product = Optional.ofNullable(productsMap.get(reservationRequest.productId()))
+                    .orElseThrow(() -> {
+                        log.error("Product with ID {} not found", reservationRequest.productId());
+                        return new ProductNotFoundException();
+                    });
             if (product.getQuantity() < reservationRequest.quantity()) {
-                log.warn("Product {} is out of stock", product.getName());
+                log.warn("Product {} (ID: {}) is out of stock. Requested: {}, Available: {}",
+                        product.getName(), product.getId(), reservationRequest.quantity(), product.getQuantity());
                 return false;
             }
             product.setQuantity(product.getQuantity() - reservationRequest.quantity());
             productsToReserve.add(product);
         }
         productRepository.saveAll(productsToReserve);
-        log.info("Products was reserved successfully");
+        log.info("Successfully reserved {} products", productsToReserve.size());
         return true;
     }
 

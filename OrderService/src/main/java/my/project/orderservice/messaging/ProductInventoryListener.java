@@ -22,7 +22,7 @@ public class ProductInventoryListener {
     private final OrderService orderService;
     private final CartFeignClient cartFeignClient;
 
-    private final KafkaTemplate<String, OrderCancelledEvent> orderCancelledKafkaTemplate;
+    private final KafkaTemplate<String, Object> kafkaTemplate;
     private final KafkaTopicsConfig kafkaTopicsConfig;
 
 
@@ -42,13 +42,16 @@ public class ProductInventoryListener {
         log.info("Cart cleared for customer {}", customerId);
     }
 
-    @KafkaListener(topics = "${spring.kafka.topic.productOutOfStock}")
+    @KafkaListener(
+            topics = "${spring.kafka.topic.productOutOfStock}",
+            containerFactory = "outOfStockEventListenerContainerFactory"
+    )
     @Transactional
     public void handleProductOutOfStockEvent(ProductOutOfStockEvent event) {
         log.info("Handling product out of stock event: {}", event);
 
         OrderDTO updatedOrder = orderService.updateOrderStatus(event.orderId(), OrderEntity.Status.CANCELLED);
         OrderCancelledEvent cancelledEvent = new OrderCancelledEvent(updatedOrder.getId(), updatedOrder.getCustomerId(), "Not enough stock");
-        orderCancelledKafkaTemplate.send(kafkaTopicsConfig.getOrderCancelled(), String.valueOf(updatedOrder.getCustomerId()), cancelledEvent);
+        kafkaTemplate.send(kafkaTopicsConfig.getOrderCancelled(), String.valueOf(updatedOrder.getCustomerId()), cancelledEvent);
     }
 }

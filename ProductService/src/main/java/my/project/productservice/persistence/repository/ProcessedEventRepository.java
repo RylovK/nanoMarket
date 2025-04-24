@@ -9,6 +9,5 @@ import java.util.Optional;
 @Repository
 public interface ProcessedEventRepository extends CrudRepository<ProcessedEvent, Long> {
 
-
-    Optional<ProcessedEvent> findByMessageId(String messageId);
+    boolean existsByMessageId(String messageId);
 }

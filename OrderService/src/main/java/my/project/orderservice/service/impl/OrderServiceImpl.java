@@ -12,14 +12,12 @@ import my.project.orderservice.repository.*;
 import my.project.orderservice.service.OrderService;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,33 +28,43 @@ public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
     private final OrderMapper orderMapper;
-    private final KafkaTemplate<String, OrderCreatedEvent> kafkaTemplate;
+    private final KafkaTemplate<String, Object> kafkaTemplate;
 
     private final KafkaTopicsConfig kafkaTopicsConfig;
 
     @Override
     @Transactional
-    public OrderDTO createOrder(OrderEntity orderEntity) throws ExecutionException, InterruptedException {
+    public OrderDTO createOrder(OrderEntity orderEntity) {
         orderEntity.setStatus(OrderEntity.Status.PENDING);
-        OrderEntity saved = orderRepository.save(orderEntity);
+        OrderEntity saved;
+        try {
+            saved = orderRepository.save(orderEntity);
 
-        log.info("Order {} created for customer: {}", saved.getId(), saved.getCustomerId());
+            log.info("Order {} created for customer: {}", saved.getId(), saved.getCustomerId());
 
-        OrderCreatedEvent event = orderMapper.toOrderCreatedEvent(saved);
+            OrderCreatedEvent event = orderMapper.toOrderCreatedEvent(saved);
 
-                log.debug("Sending order created event to Kafka for order: {}", saved.getId());
+            log.debug("Sending order created event to Kafka for order: {}", saved.getId());
 
-        ProducerRecord<String, OrderCreatedEvent> producerRecord = new ProducerRecord<>(
-                kafkaTopicsConfig.getOrderCreated(),
-                String.valueOf(saved.getCustomerId()),
-                event
-        );
-        producerRecord.headers().add("messageId", UUID.randomUUID().toString().getBytes());
+            ProducerRecord<String, Object> producerRecord = new ProducerRecord<>(
+                    kafkaTopicsConfig.getOrderCreated(),
+                    String.valueOf(saved.getCustomerId()),
+                    event
+            );
+            producerRecord.headers().add("messageId", UUID.randomUUID().toString().getBytes(StandardCharsets.UTF_8));
 
-        SendResult<String, OrderCreatedEvent> result = kafkaTemplate
-                .send(producerRecord).get();
+            kafkaTemplate.send(producerRecord)
+                    .thenAccept(result -> log.debug("Order created event sent to Kafka: {}", result.getRecordMetadata()))
+                    .exceptionally(ex -> {
+                        log.error("Failed to send order created event to Kafka for order {}: {}", saved.getId(), ex.getMessage(), ex);
+                        return null;
+                    });
 
-        log.debug("Order created event sent to Kafka: {}", result.getRecordMetadata());
+        } catch (Exception e) {
+            log.error("Error sending order created event to Kafka: {}", e.getMessage());
+            throw new RuntimeException("Failed to send order created event", e);
+        }
+
 
         return orderMapper.toOrderDTO(saved);
     }
