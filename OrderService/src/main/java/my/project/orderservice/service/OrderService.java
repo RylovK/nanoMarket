@@ -20,7 +20,7 @@ public interface OrderService {
      * @param orderEntity the {@link OrderEntity} object containing the details of the order to be created
      * @return the created {@link OrderDTO} object representing the order
      */
-    OrderDTO createOrder(@Valid OrderEntity orderEntity) throws ExecutionException, InterruptedException;
+    OrderDTO createOrder(@Valid OrderEntity orderEntity);
 
     /**
      * Retrieves an order by its unique identifier.
