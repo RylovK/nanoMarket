@@ -3,6 +3,7 @@ package my.project.orderservice.dto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import my.project.dto.OrderItemDTO;
 import my.project.orderservice.entity.OrderEntity;
 
 import java.math.BigDecimal;

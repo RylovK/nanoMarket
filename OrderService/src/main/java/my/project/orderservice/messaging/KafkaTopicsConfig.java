@@ -8,8 +8,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "spring.kafka.topic")
 @Getter @Setter
 public class KafkaTopicsConfig {
-    private String orderCreated;
-    private String orderCancelled;
-    private String productReserved;
-    private String productOutOfStock;
+    private String orderEvents;
+    private String orderCommands;
+    private String productEvents;
+    private String productCommands;
 }

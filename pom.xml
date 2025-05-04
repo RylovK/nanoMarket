@@ -26,6 +26,7 @@
         <module>CartService</module>
         <module>OrderService</module>
         <module>GatewayServer</module>
+        <module>SagaService</module>
     </modules>
 
     <dependencyManagement>

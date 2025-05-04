@@ -1,6 +1,7 @@
-package my.project.orderservice.messaging.events;
+package my.project.events;
 
-import my.project.orderservice.dto.OrderItemDTO;
+
+import my.project.dto.OrderItemDTO;
 
 import java.io.Serializable;
 import java.util.List;

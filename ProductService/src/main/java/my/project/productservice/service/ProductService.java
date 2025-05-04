@@ -1,9 +1,9 @@
 package my.project.productservice.service;
 
 import jakarta.validation.Valid;
+import my.project.dto.OrderItemDTO;
 import my.project.productservice.dto.ProductAvailabilityDTO;
 import my.project.productservice.dto.ProductDTO;
-import my.project.productservice.dto.ProductReservationRequest;
 import my.project.productservice.exception.ProductNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -84,7 +84,7 @@ public interface ProductService {
      *
      * @param reservationRequests list of products, containing product's id and quantity to be reserved
      */
-    boolean reserveProducts(@Valid List<ProductReservationRequest> reservationRequests);
+    boolean reserveProducts(@Valid List<OrderItemDTO> reservationRequestList);
 
 
     /**

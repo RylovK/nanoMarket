@@ -3,7 +3,7 @@ package my.project.orderservice.mapper;
 import my.project.orderservice.dto.CartItem;
 import my.project.orderservice.dto.OrderDTO;
 import my.project.orderservice.entity.OrderItem;
-import my.project.orderservice.messaging.events.OrderCreatedEvent;
+import my.project.events.OrderCreatedEvent;
 import my.project.orderservice.entity.OrderEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

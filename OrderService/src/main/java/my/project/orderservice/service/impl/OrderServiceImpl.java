@@ -3,9 +3,9 @@ package my.project.orderservice.service.impl;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import my.project.events.OrderCreatedEvent;
 import my.project.orderservice.dto.*;
 import my.project.orderservice.messaging.KafkaTopicsConfig;
-import my.project.orderservice.messaging.events.OrderCreatedEvent;
 import my.project.orderservice.entity.OrderEntity;
 import my.project.orderservice.mapper.OrderMapper;
 import my.project.orderservice.repository.*;
@@ -47,7 +47,7 @@ public class OrderServiceImpl implements OrderService {
             log.debug("Sending order created event to Kafka for order: {}", saved.getId());
 
             ProducerRecord<String, Object> producerRecord = new ProducerRecord<>(
-                    kafkaTopicsConfig.getOrderCreated(),
+                    kafkaTopicsConfig.getOrderEvents(),
                     String.valueOf(saved.getCustomerId()),
                     event
             );

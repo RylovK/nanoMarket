@@ -1,4 +1,4 @@
-package my.project.productservice.messaging.events;
+package my.project.events;
 
 import java.io.Serializable;
 import java.util.UUID;

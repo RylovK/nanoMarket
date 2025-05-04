@@ -1,4 +1,4 @@
-package my.project.orderservice.dto;
+package my.project.dto;
 
 import java.math.BigDecimal;
 
@@ -11,4 +11,4 @@ import java.math.BigDecimal;
  * @param price     the price of the product at the time of the order
  * @param quantity  the quantity of the product in the order
  */
-public record OrderItemDTO (Long productId, BigDecimal price, Integer quantity) {}
+public record OrderItemDTO(Long productId, BigDecimal price, Integer quantity) {}

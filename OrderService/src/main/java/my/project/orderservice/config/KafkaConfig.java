@@ -1,10 +1,9 @@
 package my.project.orderservice.config;
 
 import lombok.RequiredArgsConstructor;
+import my.project.commands.ConfirmOrderCommand;
 import my.project.orderservice.messaging.KafkaTopicsConfig;
-import my.project.orderservice.messaging.events.ProductOutOfStockEvent;
-import my.project.orderservice.messaging.events.ProductReservedEvent;
-import org.apache.kafka.clients.admin.NewTopic;
+import my.project.events.ProductOutOfStockEvent;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -14,7 +13,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
-import org.springframework.kafka.config.TopicBuilder;
 import org.springframework.kafka.core.*;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 
@@ -98,8 +96,8 @@ public class KafkaConfig {
 
 
     @Bean
-    public ConsumerFactory<String, ProductReservedEvent> productReservedEventConsumerFactory() {
-        JsonDeserializer<ProductReservedEvent> deserializer = new JsonDeserializer<>(ProductReservedEvent.class);
+    public ConsumerFactory<String, ConfirmOrderCommand> confirmOrderCommandConsumerFactory() {
+        JsonDeserializer<ConfirmOrderCommand> deserializer = new JsonDeserializer<>(ConfirmOrderCommand.class);
         deserializer.setRemoveTypeHeaders(false);
         deserializer.addTrustedPackages("*");
         deserializer.setUseTypeMapperForKey(true);
@@ -115,10 +113,10 @@ public class KafkaConfig {
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, ProductReservedEvent> productReservedListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, ProductReservedEvent> factory =
+    public ConcurrentKafkaListenerContainerFactory<String, ConfirmOrderCommand> confirmOrderCommandConcurrentKafkaListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, ConfirmOrderCommand> factory =
                 new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(productReservedEventConsumerFactory());
+        factory.setConsumerFactory(confirmOrderCommandConsumerFactory());
         return factory;
     }
 
@@ -150,23 +148,6 @@ public class KafkaConfig {
 
 
 
-    @Bean
-    public NewTopic orderCreatedTopic() {
-        return TopicBuilder.name(kafkaTopicsConfig.getOrderCreated())
-                .partitions(3)
-                .replicas(3)
-                .configs(Map.of("min.insync.replicas", "2"))
-                .build();
-    }
-
-    @Bean
-    public NewTopic orderCancelledTopic() {
-        return TopicBuilder.name(kafkaTopicsConfig.getOrderCancelled())
-                .partitions(3)
-                .replicas(3)
-                .configs(Map.of("min.insync.replicas", "2"))
-                .build();
-    }
 }
 
 //    @Bean

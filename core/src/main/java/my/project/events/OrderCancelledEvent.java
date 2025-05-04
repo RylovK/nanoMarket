@@ -1,4 +1,4 @@
-package my.project.orderservice.messaging.events;
+package my.project.events;
 
 import java.io.Serializable;
 import java.util.UUID;

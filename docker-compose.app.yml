@@ -110,6 +110,46 @@ services:
       - SERVER_PORT=8072
     restart: on-failure
 
+  saga-service:
+    image: nanomarket/sagaservice:latest
+    container_name: saga-service
+    build:
+      context: ./SagaService
+      dockerfile: Dockerfile
+    depends_on:
+      config-server:
+        condition: service_healthy
+    networks:
+        - backend
+    restart: on-failure
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    depends_on:
+      - gateway-server
+    networks:
+      - backend
+
+  grafana:
+    image: grafana/grafana-oss:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    networks:
+      - backend
+#    volumes:
+#      - grafana-storage:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+
 networks:
   backend:
     external: true
+#volumes:
+#  grafana-storage:

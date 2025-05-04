@@ -2,9 +2,9 @@ package my.project.productservice.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import my.project.dto.OrderItemDTO;
 import my.project.productservice.dto.ProductAvailabilityDTO;
 import my.project.productservice.dto.ProductDTO;
-import my.project.productservice.dto.ProductReservationRequest;
 import my.project.productservice.persistence.entity.Brand;
 import my.project.productservice.persistence.entity.Category;
 import my.project.productservice.persistence.entity.Product;
@@ -106,31 +106,31 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional(isolation = Isolation.SERIALIZABLE)
-    public boolean reserveProducts(List<ProductReservationRequest> reservationRequests) {
-        if (reservationRequests.isEmpty()) {
+    public boolean reserveProducts(List<OrderItemDTO> reservationRequestList) {
+        if (reservationRequestList.isEmpty()) {
             log.warn("Reservation requests list is empty");
             return false;
         }
         Map<Long, Product> productsMap = productRepository.findAllById(
-                reservationRequests.stream()
-                        .map(ProductReservationRequest::productId)
+                reservationRequestList.stream()
+                        .map(OrderItemDTO::productId)
                         .toList()
         ).stream().collect(Collectors.toMap(Product::getId, product -> product));
 
         List<Product> productsToReserve = new ArrayList<>();
 
-        for (ProductReservationRequest reservationRequest : reservationRequests) {
-            Product product = Optional.ofNullable(productsMap.get(reservationRequest.productId()))
+        for (OrderItemDTO orderItem: reservationRequestList) {
+            Product product = Optional.ofNullable(productsMap.get(orderItem.productId()))
                     .orElseThrow(() -> {
-                        log.error("Product with ID {} not found", reservationRequest.productId());
+                        log.error("Product with ID {} not found", orderItem.productId());
                         return new ProductNotFoundException();
                     });
-            if (product.getQuantity() < reservationRequest.quantity()) {
+            if (product.getQuantity() < orderItem.quantity()) {
                 log.warn("Product {} (ID: {}) is out of stock. Requested: {}, Available: {}",
-                        product.getName(), product.getId(), reservationRequest.quantity(), product.getQuantity());
+                        product.getName(), product.getId(), orderItem.quantity(), product.getQuantity());
                 return false;
             }
-            product.setQuantity(product.getQuantity() - reservationRequest.quantity());
+            product.setQuantity(product.getQuantity() - orderItem.quantity());
             productsToReserve.add(product);
         }
         productRepository.saveAll(productsToReserve);

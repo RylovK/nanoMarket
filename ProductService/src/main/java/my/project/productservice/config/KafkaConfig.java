@@ -1,9 +1,8 @@
 package my.project.productservice.config;
 
 import lombok.RequiredArgsConstructor;
+import my.project.commands.ReserveProductCommand;
 import my.project.productservice.messaging.KafkaTopicsConfig;
-import my.project.productservice.messaging.events.OrderCreatedEvent;
-import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -13,7 +12,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
-import org.springframework.kafka.config.TopicBuilder;
+
 import org.springframework.kafka.core.*;
 import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
@@ -81,7 +80,7 @@ public class KafkaConfig {
     }
 
     @Bean
-    public ConsumerFactory<String, OrderCreatedEvent> orderCreatedConsumerFactory() {
+    public ConsumerFactory<String, ReserveProductCommand> reserveProductCommandConsumerFactory() {
         Map<String, Object> config = new HashMap<>();
         config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         config.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
@@ -94,34 +93,18 @@ public class KafkaConfig {
         return new DefaultKafkaConsumerFactory<>(
                 config,
                 new StringDeserializer(),
-                new JsonDeserializer<>(OrderCreatedEvent.class, false)
+                new JsonDeserializer<>(ReserveProductCommand.class, false)
         );
     }
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, OrderCreatedEvent> orderCreatedKafkaListenerContainerFactory() {
-        var factory = new ConcurrentKafkaListenerContainerFactory<String, OrderCreatedEvent>();
+    public ConcurrentKafkaListenerContainerFactory<String, ReserveProductCommand> reserveProductCommandConcurrentKafkaListenerContainerFactory() {
+        var factory = new ConcurrentKafkaListenerContainerFactory<String, ReserveProductCommand>();
 //        DefaultErrorHandler errorHandler = new DefaultErrorHandler(new DeadLetterPublishingRecoverer(kafkaTemplate()));
-        factory.setConsumerFactory(orderCreatedConsumerFactory());
+        factory.setConsumerFactory(reserveProductCommandConsumerFactory());
 //        factory.setCommonErrorHandler(errorHandler);
         return factory;
     }
 
 
-    @Bean
-    public NewTopic productReservedTopic() {
-        return TopicBuilder.name(kafkaTopicsConfig.getProductReserved())
-                .partitions(3)
-                .replicas(3)
-                .configs(Map.of("min.insync.replicas", "2"))
-                .build();
-    }
 
-    @Bean
-    public NewTopic productOutOfStockTopic() {
-        return TopicBuilder.name(kafkaTopicsConfig.getProductOutOfStock())
-                .partitions(3)
-                .replicas(3)
-                .configs(Map.of("min.insync.replicas", "2"))
-                .build();
-    }
 }

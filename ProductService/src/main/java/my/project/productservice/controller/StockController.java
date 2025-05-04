@@ -6,8 +6,8 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import my.project.dto.OrderItemDTO;
 import my.project.productservice.dto.ProductAvailabilityDTO;
-import my.project.productservice.dto.ProductReservationRequest;
 import my.project.productservice.service.ProductService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -42,8 +42,8 @@ public class StockController {
     public ResponseEntity<Void> reserveProducts(
             @RequestBody @Valid
             @Parameter(description = "List of products and their quantities to reserve", required = true)
-            List<ProductReservationRequest> reservationRequests) {
-        productService.reserveProducts(reservationRequests);
+            List<OrderItemDTO> reservationRequestList) {
+        productService.reserveProducts(reservationRequestList);
         return ResponseEntity.ok().build();
     }
 }
