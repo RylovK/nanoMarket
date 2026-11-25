@@ -38,7 +38,7 @@ To run the project, you need:
    
 2. Build the project:
     ```bash
-    mvn clean package
+    ./mvnw clean package
 
 3. Start the services using Docker Compose:
     ```bash
